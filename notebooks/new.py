@@ -154,9 +154,10 @@ def main(data_path, checkpoint_path, batch_size=1):
         _ = torch.randn(1).to(device)
 
     # Load checkpoint (local copy)
-    local_checkpoint = "/tmp/checkpoint_epoch_10.pth"
-    os.system(f"cp {checkpoint_path} {local_checkpoint}")
-    checkpoint = torch.load(local_checkpoint, map_location=device)
+    #local_checkpoint = "/tmp/checkpoint_epoch_10.pth"
+    #os.system(f"cp {checkpoint_path} {local_checkpoint}")
+
+    checkpoint = torch.load(checkpoint_path, map_location=device)
     model.load_state_dict(checkpoint["model_state_dict"])
 
     visualizer = DataVisualizer(dataset, model, device, batch_size=batch_size)
@@ -166,6 +167,6 @@ def main(data_path, checkpoint_path, batch_size=1):
 if __name__ == "__main__":
     # Parameters (update paths as needed)
     DATA_PATH = "/net/ens/am4ip/datasets/project-dataset"
-    CHECKPOINT_PATH = "/net/cremi/sasifchaudhr/espaces/travail/Semantic-Segmentation-for-Autonomous-Driving/experiments/experiment_20241220-131602/checkpoints/checkpoint_epoch_10.pth"
+    CHECKPOINT_PATH = "/net/travail/rramesh/AdvanceimageProcessing/Semantic-Segmentation-for-Autonomous-Driving/experiments/checkpoint_epoch_10.pth"
 
     main(DATA_PATH, CHECKPOINT_PATH)

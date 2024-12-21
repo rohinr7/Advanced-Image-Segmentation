@@ -109,3 +109,52 @@ def save_predictions(inputs, targets, predictions, epoch, experiment_dir):
         
         fig.savefig(os.path.join(experiment_dir, "results", f"epoch_{epoch}_sample_{i}.png"))
         plt.close(fig)    
+
+
+def visualize_batch_with_colorbar(inputs, predictions, targets, batch_idx, num_samples=3, rgb_pred=False):
+    """
+    Visualize a few samples from the batch with intensity color bars and optional RGB predictions.
+    
+    Args:
+        inputs (torch.Tensor): Input images of shape (N, C, H, W).
+        predictions (torch.Tensor or np.ndarray): Model predictions of shape (N, H, W) or (N, H, W, 3).
+        targets (torch.Tensor): Ground truth masks of shape (N, H, W).
+        batch_idx (int): Batch index (for display purposes).
+        num_samples (int): Number of samples to visualize.
+        rgb_pred (bool): If True, predictions are RGB images.
+    """
+    inputs = inputs.cpu().numpy()
+    #targets = targets.cpu().numpy()
+    if rgb_pred == False:
+        predictions_r = predictions.cpu().numpy()
+    
+    for i in range(min(num_samples, inputs.shape[0])):
+        fig, axes = plt.subplots(1, 3, figsize=(15, 5))
+        
+        # Input image
+        ax1 = axes[0]
+        im1 = ax1.imshow(inputs[i].transpose(1, 2, 0))  # Convert CHW to HWC for display
+        ax1.set_title(f"Input Image (Batch {batch_idx}, Sample {i})")
+        ax1.axis("off")
+        fig.colorbar(im1, ax=ax1, fraction=0.046, pad=0.04)  # Add color bar
+        
+        # Prediction
+        ax2 = axes[1]
+        if rgb_pred:
+            im2 = ax2.imshow(predictions[i])  # RGB prediction
+        else:
+            im2 = ax2.imshow(predictions_r[i], cmap="gray")  # Grayscale/class prediction
+            fig.colorbar(im2, ax=ax2, fraction=0.046, pad=0.04)  # Add color bar
+        ax2.set_title(f"Prediction (Sample {i})")
+        ax2.axis("off")
+        
+        # Ground truth
+        ax3 = axes[2]
+        im3 = ax3.imshow(targets[i])  # Use the same colormap
+
+        ax3.set_title(f"Ground Truth (Sample {i})")
+        ax3.axis("off")
+
+        
+        plt.tight_layout()
+        plt.show()
