@@ -42,6 +42,13 @@ class UNet(nn.Module):
         return nn.ConvTranspose2d(in_channels, out_channels, kernel_size=2, stride=2)
 
     def forward(self, x):
+        # Calculate padding to make dimensions divisible by 16
+        h, w = x.shape[2], x.shape[3]  # Height and width
+        pad_h = (16 - h % 16) % 16  # Padding needed for height
+        pad_w = (16 - w % 16) % 16  # Padding needed for width
+
+        x = F.pad(x, (0, pad_w, 0, pad_h))  # Pad width and height
+
         # Encoder
         enc1 = self.enc1(x)
         enc2 = self.enc2(F.max_pool2d(enc1, 2))
@@ -60,6 +67,9 @@ class UNet(nn.Module):
         dec2 = self.dec2(torch.cat((dec2, enc2), dim=1))
         dec1 = self.upconv1(dec2)
         dec1 = self.dec1(torch.cat((dec1, enc1), dim=1))
+
+        # Crop to original size
+        dec1 = dec1[:, :, :h, :w]  # Crop back to original height and width
 
         # Output
         return torch.sigmoid(self.out_conv(dec1))
