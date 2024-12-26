@@ -2,7 +2,64 @@ import torch
 import os
 import json
 import torch
+import numpy as np
 import matplotlib.pyplot as plt
+
+# Reverse the color_to_class mapping to get class_to_color mapping
+color_to_class = {
+    (0, 0, 0): 0,            # Unlabeled
+    (111, 74, 0): 1,         # Dynamic
+    (81, 0, 81): 2,          # Ground
+    (128, 64, 128): 3,       # Road
+    (244, 35, 232): 4,       # Sidewalk
+    (250, 170, 160): 5,      # Parking
+    (230, 150, 140): 6,      # Rail track
+    (70, 70, 70): 7,         # Building
+    (102, 102, 156): 8,      # Wall
+    (190, 153, 153): 9,      # Fence
+    (180, 165, 180): 10,     # Guard rail
+    (150, 100, 100): 11,     # Bridge
+    (150, 120, 90): 12,      # Tunnel
+    (153, 153, 153): 13,     # Pole
+    (250, 170, 30): 14,      # Traffic light
+    (220, 220, 0): 15,       # Traffic sign
+    (107, 142, 35): 16,      # Vegetation
+    (152, 251, 152): 17,     # Terrain
+    (70, 130, 180): 18,      # Sky
+    (220, 20, 60): 19,       # Person
+    (255, 0, 0): 20,         # Rider
+    (0, 0, 142): 21,         # Car
+    (0, 0, 70): 22,          # Truck
+    (0, 60, 100): 23,        # Bus
+    (0, 0, 90): 24,          # Caravan
+    (0, 0, 110): 25,         # Trailer
+    (0, 80, 100): 26,        # Train
+    (0, 0, 230): 27,         # Motorcycle
+    (119, 11, 32): 29        # Bicycle
+}
+
+class_to_color = {v: k for k, v in color_to_class.items()}
+
+def map_classes_to_colors(predictions, class_to_color):
+    """
+    Map class IDs to RGB colors for a segmentation map.
+
+    Args:
+        predictions (torch.Tensor): Tensor of shape (H, W) containing class IDs.
+        class_to_color (dict): Mapping from class IDs to RGB colors.
+
+    Returns:
+        np.ndarray: RGB image of shape (H, W, 3).
+    """
+    height, width = predictions.shape
+    rgb_image = np.zeros((height, width, 3), dtype=np.uint8)
+    
+    for class_id, color in class_to_color.items():
+        rgb_image[predictions == class_id] = color  # Map each class to its color
+    
+    return rgb_image
+
+
 
 def save_checkpoint(model, optimizer, epoch, filepath):
     """
