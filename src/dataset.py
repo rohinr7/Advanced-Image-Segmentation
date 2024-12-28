@@ -108,5 +108,5 @@ class ProjectDatasets(Dataset):
         else:
             mask = mask_to_class_index(mask)
             mask = torch.from_numpy(mask.astype(np.int64))
-
-        return image, mask, source
+        image_name = os.path.basename(image_path)
+        return image, mask, source ,image_name
