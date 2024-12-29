@@ -123,6 +123,7 @@ def main(args):
         shuffle=config["data"].get("shuffle", True),
         num_workers=config["data"].get("num_workers", 4),
         pin_memory=config["data"].get("pin_memory", True),
+
     )
     val_loader = DataLoader(val_dataset, batch_size=config["hyperparameters"]["batch_size"], shuffle=False, num_workers=4)
 
@@ -140,16 +141,32 @@ def main(args):
         model, optimizer, start_epoch = load_checkpoint(args.checkpoint_path, model, optimizer)
 
     # Initialize Trainer
+    # trainer = Trainer(
+    #     model=model,
+    #     loss_fn=loss_fn,
+    #     optimizer=optimizer,
+    #     scheduler=scheduler,
+    #     device=device,
+    #     experiment_name=args.experiment_name,
+    #     early_stopping_config=config.get("early_stopping", None), 
+    #     logging_config=config.get("logging", {}),
+    #     class_to_color=config["class_to_color"]
+    # )
+
     trainer = Trainer(
-        model=model,
-        loss_fn=loss_fn,
-        optimizer=optimizer,
-        scheduler=scheduler,
-        device=device,
-        experiment_name=args.experiment_name,
-        early_stopping_config=config.get("early_stopping", None), 
-        logging_config=config.get("logging", {})
-    )
+    model=model,
+    loss_fn=loss_fn,
+    optimizer=optimizer,
+    scheduler=scheduler,
+    device=device,
+    experiment_name=args.experiment_name,
+    logging_config=config["logging"],
+    early_stopping_config=config["early_stopping"],
+    metrics_config=config["metrics"],
+    class_to_color=config["class_to_color"],
+    class_names=config["class_names"]  # List of class names
+
+)
 
     # Save configuration
     save_config(config, trainer.experiment_dir)

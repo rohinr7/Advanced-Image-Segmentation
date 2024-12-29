@@ -62,13 +62,26 @@ def map_classes_to_colors(predictions, class_to_color):
 
 
 def save_checkpoint(model, optimizer, epoch, experiment_dir, is_best=False):
-    checkpoint_path = os.path.join(experiment_dir, f"checkpoint_epoch_{epoch}.pth")
+    """
+    Save model checkpoints.
+
+    Args:
+        model (torch.nn.Module): The model to save.
+        optimizer (torch.optim.Optimizer): The optimizer to save.
+        epoch (int): The current epoch.
+        experiment_dir (str): Directory to save checkpoints.
+        is_best (bool): If True, save as the best checkpoint.
+    """
+    # Save the latest checkpoint (overwrites previous last checkpoint)
+    last_checkpoint_path = os.path.join(experiment_dir, "last_checkpoint.pth")
     torch.save({
         "epoch": epoch,
         "model_state_dict": model.state_dict(),
         "optimizer_state_dict": optimizer.state_dict(),
-    }, checkpoint_path)
+    }, last_checkpoint_path)
+    print(f"Saved last checkpoint to {last_checkpoint_path}")
 
+    # Save the best checkpoint if required
     if is_best:
         best_path = os.path.join(experiment_dir, "best_checkpoint.pth")
         torch.save({
@@ -76,7 +89,8 @@ def save_checkpoint(model, optimizer, epoch, experiment_dir, is_best=False):
             "model_state_dict": model.state_dict(),
             "optimizer_state_dict": optimizer.state_dict(),
         }, best_path)
-
+        print(f"Saved best checkpoint to {best_path}")
+        
 
 def load_checkpoint(filepath, model, optimizer=None):
     """
@@ -119,20 +133,79 @@ def save_config(config, experiment_dir):
     with open(config_path, "w") as f:
         json.dump(config, f, indent=4)
 
-def log_metrics(epoch, train_loss, val_loss, experiment_dir):
-    """Log training and validation losses to a file."""
-    log_path = os.path.join(experiment_dir, "logs", "train.log")
-    with open(log_path, "a") as f:
-        f.write(f"Epoch {epoch}: Train Loss = {train_loss:.4f}, Val Loss = {val_loss:.4f}\n")
+def log_metrics(epoch, train_loss, val_loss, train_accuracy, val_metrics, experiment_dir, class_names=None):
+    """
+    Logs training and validation losses, accuracy, and metrics to a file.
 
-def save_checkpoint(model, optimizer, epoch, experiment_dir):
-    """Save model and optimizer state."""
+    Args:
+        epoch (int): Current epoch.
+        train_loss (float): Training loss for the epoch.
+        val_loss (float): Validation loss for the epoch.
+        train_accuracy (float): Training accuracy for the epoch.
+        val_metrics (dict): Validation metrics (e.g., IoU, Pixel Accuracy, DICE).
+        experiment_dir (str): Path to the experiment directory.
+        class_names (list): Optional list of class names for better readability.
+    """
+    log_path = os.path.join(experiment_dir, "logs", "train.log")
+
+    # Prepare class names if not provided
+    if class_names is None:
+        class_names = [f"Class_{i}" for i in range(len(val_metrics["IoU"]))]
+
+    # Format class-wise metrics for IoU and DICE
+    formatted_iou = ", ".join(f"{class_names[i]}: {val_metrics['IoU'][i]:.4f}" for i in range(len(class_names)))
+    formatted_dice = ", ".join(f"{class_names[i]}: {val_metrics['DICE'][i]:.4f}" for i in range(len(class_names)))
+
+    # Format overall metrics
+    metrics_str = f"""
+    Epoch {epoch}:
+      Train Loss: {train_loss:.4f}, Train Accuracy: {train_accuracy:.4f}
+      Val Loss: {val_loss:.4f}
+      Metrics:
+        val_loss: {val_metrics['val_loss']:.4f}
+        val_accuracy: {val_metrics['val_accuracy']:.4f}
+        IoU: {{ {formatted_iou} }}
+        MeanIoU: {val_metrics['MeanIoU']:.4f}
+        PixelAccuracy: {val_metrics['PixelAccuracy']:.4f}
+        DICE: {{ {formatted_dice} }}
+        MeanDICE: {val_metrics['MeanDICE']:.4f}
+    """
+
+    # Write to log file
+    with open(log_path, "a") as f:
+        f.write(metrics_str + "\n")
+
+    # Print to console for visibility
+    print(metrics_str)
+
+
+
+def save_checkpoint(model, optimizer, epoch, experiment_dir, is_best=False):
+    """
+    Saves a checkpoint of the model and optimizer state.
+
+    Args:
+        model (torch.nn.Module): The model to save.
+        optimizer (torch.optim.Optimizer): The optimizer to save.
+        epoch (int): The current epoch.
+        experiment_dir (str): The experiment directory where the checkpoint will be saved.
+        is_best (bool): If True, saves the checkpoint as 'best_model.pth'.
+    """
+    checkpoint = {
+        'epoch': epoch,
+        'model_state_dict': model.state_dict(),
+        'optimizer_state_dict': optimizer.state_dict(),
+    }
     checkpoint_path = os.path.join(experiment_dir, "checkpoints", f"checkpoint_epoch_{epoch}.pth")
-    torch.save({
-        "epoch": epoch,
-        "model_state_dict": model.state_dict(),
-        "optimizer_state_dict": optimizer.state_dict(),
-    }, checkpoint_path)
+    torch.save(checkpoint, checkpoint_path)
+    print(f"Checkpoint saved at: {checkpoint_path}")
+
+    # Save as best model if is_best is True
+    if is_best:
+        best_model_path = os.path.join(experiment_dir, "checkpoints", "best_model.pth")
+        torch.save(checkpoint, best_model_path)
+        print(f"Best model saved at: {best_model_path}")
+
 
 def save_predictions(inputs, targets, predictions, epoch, experiment_dir):
     """Save example predictions for visualization."""
