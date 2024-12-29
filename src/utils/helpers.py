@@ -61,23 +61,21 @@ def map_classes_to_colors(predictions, class_to_color):
 
 
 
-def save_checkpoint(model, optimizer, epoch, filepath):
-    """
-    Save the model and optimizer state to a checkpoint file.
-    
-    Args:
-        model (torch.nn.Module): The model to save.
-        optimizer (torch.optim.Optimizer): The optimizer to save.
-        epoch (int): Current epoch number.
-        filepath (str): Path to save the checkpoint file.
-    """
-    checkpoint = {
+def save_checkpoint(model, optimizer, epoch, experiment_dir, is_best=False):
+    checkpoint_path = os.path.join(experiment_dir, f"checkpoint_epoch_{epoch}.pth")
+    torch.save({
+        "epoch": epoch,
         "model_state_dict": model.state_dict(),
         "optimizer_state_dict": optimizer.state_dict(),
-        "epoch": epoch
-    }
-    torch.save(checkpoint, filepath)
-    print(f"Checkpoint saved to {filepath}")
+    }, checkpoint_path)
+
+    if is_best:
+        best_path = os.path.join(experiment_dir, "best_checkpoint.pth")
+        torch.save({
+            "epoch": epoch,
+            "model_state_dict": model.state_dict(),
+            "optimizer_state_dict": optimizer.state_dict(),
+        }, best_path)
 
 
 def load_checkpoint(filepath, model, optimizer=None):
@@ -215,3 +213,12 @@ def visualize_batch_with_colorbar(inputs, predictions, targets, batch_idx, num_s
         
         plt.tight_layout()
         plt.show()
+
+import yaml
+
+def load_config(config_path):
+    print(f"Loading config from: {config_path}")  # Debug statement
+    with open(config_path, "r") as f:
+        config = yaml.safe_load(f)
+        print(f"Loaded config type: {type(config)}")  # Should be <class 'dict'>
+        return config

@@ -1,41 +1,97 @@
 import torch
-from torch.utils.data import DataLoader
-from torchvision.transforms import Compose, ToTensor, Normalize
-from src.dataset import ProjectDatasets
-from src.models.UNet import UNet
-from src.utils.metrics import compute_iou
-from src.utils.visualization import visualize_predictions
+import numpy as np
+from src.metrics import compute_iou, compute_pixel_accuracy, compute_dice_coefficient
+from src.utils.helpers import map_classes_to_colors  # Assuming this function maps class IDs to RGB colors
 
-def evaluate(model_path, data_path):
-    transform = Compose([ToTensor(), Normalize(mean=[0.5], std=[0.5])])
-    test_dataset = ProjectDatasets(root_path=data_path, transform=transform)
-    test_loader = DataLoader(test_dataset, batch_size=1, shuffle=False)
+class Evaluator:
+    def __init__(self, model, device, class_to_color, metrics_config):
+        """
+        Initializes the evaluator.
 
-    model = UNet(in_channels=3, out_channels=1)
-    model.load_state_dict(torch.load(model_path))
-    model.eval()
+        Args:
+            model (torch.nn.Module): Trained model.
+            device (torch.device): Device to run evaluation on.
+            class_to_color (dict): Mapping of class IDs to RGB colors.
+            metrics_config (dict): Configuration for metrics to evaluate.
+        """
+        self.model = model
+        self.device = device
+        self.class_to_color = class_to_color
+        self.num_classes = len(class_to_color)
+        self.metrics_config = metrics_config
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model.to(device)
+    def evaluate_batch(self, predictions, targets):
+        """
+        Compute metrics for a single batch.
 
-    iou_scores = []
+        Args:
+            predictions (np.ndarray): Predicted class IDs of shape (N, H, W).
+            targets (np.ndarray): Ground truth class IDs of shape (N, H, W).
 
-    with torch.no_grad():
-        for inputs, targets, _ in test_loader:
-            inputs, targets = inputs.to(device), targets.to(device)
-            outputs = model(inputs)
-            predictions = outputs > 0.5
-            iou_scores.append(compute_iou(predictions, targets))
+        Returns:
+            dict: Dictionary containing computed metrics (IoU, PixelAccuracy, DICE).
+        """
+        results = {}
+        if self.metrics_config.get("iou", True):
+            results["IoU"], results["MeanIoU"] = compute_iou(predictions, targets, self.num_classes)
+        if self.metrics_config.get("pixel_accuracy", True):
+            results["PixelAccuracy"] = compute_pixel_accuracy(predictions, targets)
+        if self.metrics_config.get("dice", True):
+            results["DICE"], results["MeanDICE"] = compute_dice_coefficient(predictions, targets, self.num_classes)
+        return results
 
-    avg_iou = sum(iou_scores) / len(iou_scores)
-    print(f"Average IoU: {avg_iou:.4f}")
+    def evaluate(self, data_loader):
+        """
+        Evaluate the model on the given data loader.
 
-if __name__ == "__main__":
-    import argparse
+        Args:
+            data_loader (DataLoader): DataLoader for the evaluation dataset.
 
-    parser = argparse.ArgumentParser(description="Evaluate UNet model")
-    parser.add_argument("--model_path", type=str, required=True, help="Path to trained model")
-    parser.add_argument("--data_path", type=str, required=True, help="Path to test dataset")
-    args = parser.parse_args()
+        Returns:
+            dict: Aggregated metrics across all batches.
+        """
+        print("Starting evaluation loop...")
+        self.model.eval()
 
-    evaluate(args.model_path, args.data_path)
+        # Initialize total metrics including MeanIoU and MeanDICE
+        total_metrics = {metric: [] for metric in self.metrics_config.keys()}
+        total_metrics["MeanIoU"] = []
+        total_metrics["MeanDICE"] = []
+
+        # Storage for RGB conversions
+        rgb_predictions_list = []
+        rgb_targets_list = []
+
+        with torch.no_grad():
+            for batch_idx, (inputs, targets, _, _) in enumerate(data_loader):
+                print(f"Processing batch {batch_idx + 1}/{len(data_loader)}...")
+                inputs, targets = inputs.to(self.device), targets.to(self.device)
+                predictions = self.model(inputs)
+                predictions = torch.argmax(predictions, dim=1).cpu().numpy()
+                targets = targets.cpu().numpy()
+
+                # Compute metrics for the batch
+                batch_metrics = self.evaluate_batch(predictions, targets)
+                print(f"Batch {batch_idx + 1} Metrics: {batch_metrics}")
+
+                # Aggregate metrics
+                for metric, value in batch_metrics.items():
+                    total_metrics[metric].append(value)
+
+                # Convert class predictions and targets to RGB
+                rgb_predictions = np.stack([
+                    map_classes_to_colors(predictions[i], self.class_to_color) for i in range(predictions.shape[0])
+                ])
+                rgb_targets = np.stack([
+                    map_classes_to_colors(targets[i], self.class_to_color) for i in range(targets.shape[0])
+                ])
+
+                rgb_predictions_list.append(rgb_predictions)
+                rgb_targets_list.append(rgb_targets)
+
+        # Compute average metrics, including MeanIoU and MeanDICE
+        avg_metrics = {metric: np.mean(values) for metric, values in total_metrics.items()}
+        print("Evaluation loop complete.")
+
+        # Return metrics and RGB representations
+        return avg_metrics, rgb_predictions_list, rgb_targets_list
