@@ -18,13 +18,26 @@ def get_model(config):
         raise ValueError(f"Unsupported model: {config['model']['name']}")
 
 def get_loss_function(config):
+    """
+    Returns the appropriate loss function based on the configuration.
+    """
     loss_name = config["loss"]["name"]
     params = config["loss"].get("params", {})
+
     if loss_name == "CrossEntropyLoss":
         return torch.nn.CrossEntropyLoss(**params)
+    elif loss_name == "DiceLoss":
+        from src.losses import DiceLoss
+        return DiceLoss(**params)
     elif loss_name == "FocalLoss":
         from src.losses import FocalLoss
         return FocalLoss(**params)
+    elif loss_name == "CombinedLoss":
+        from src.losses import CombinedLoss
+        return CombinedLoss(**params)
+    elif loss_name == "TverskyLoss":
+        from src.losses import TverskyLoss
+        return TverskyLoss(**params)
     else:
         raise ValueError(f"Unsupported loss function: {loss_name}")
 

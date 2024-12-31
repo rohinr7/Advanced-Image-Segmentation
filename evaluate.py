@@ -1,7 +1,7 @@
 import torch
 from torch.utils.data import DataLoader, random_split
 from src.dataset import ProjectDatasets
-from src.utils.model_utils import get_model
+from src.utils.model_utils import get_model,get_loss_function
 from src.utils.transform_utils import get_transforms
 from src.utils.helpers import load_config
 from src.evaluator import Evaluator
@@ -45,8 +45,8 @@ def evaluate(config, model_path):
 
     # Evaluator
     print("Initializing evaluator...")
-    evaluator = Evaluator(model=model, device=device, class_to_color=config["class_to_color"], metrics_config=config["metrics"])
-    metrics = evaluator.evaluate(test_loader)
+    evaluator = Evaluator(model=model, device=device,loss_fn=get_loss_function(config), class_to_color=config["class_to_color"], metrics_config=config["metrics"])
+    metrics,_ = evaluator.evaluate(test_loader)
     print(f"Evaluation Metrics: {metrics}")
 
 if __name__ == "__main__":

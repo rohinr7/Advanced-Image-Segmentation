@@ -1,6 +1,6 @@
 import torch
 from torch.utils.tensorboard import SummaryWriter
-from src.utils.helpers import save_config, log_metrics, save_checkpoint, save_predictions
+from src.utils.helpers import save_config, log_metrics, save_checkpoint, save_predictions,log_metrics,log_to_file
 from src.evaluator import Evaluator
 import numpy as np
 import os
@@ -97,7 +97,7 @@ class Trainer:
     
     def fit(self, train_loader, val_loader, epochs, start_epoch=0):
         """Train the model."""
-        evaluator = Evaluator(self.model, self.device, self.class_to_color, self.metrics_config)
+        evaluator = Evaluator(self.model, self.device,self.loss_fn ,self.class_to_color, self.metrics_config)
          # Get class names from config
         
 
@@ -139,7 +139,7 @@ class Trainer:
 
             print(f"Train Loss: {avg_epoch_loss:.4f}, Train Accuracy: {train_accuracy:.4f}")
             print(f"Grad Norm = {avg_grad_norm:.4f}")
-            val_loss, val_metrics = self.validate(val_loader, evaluator)
+            val_metrics,val_loss =evaluator.evaluate(val_loader) #self.validate(val_loader, evaluator)
             print(f"Validation Loss: {val_loss:.4f}, Metrics: {val_metrics}")
 
             log_metrics(
@@ -157,15 +157,20 @@ class Trainer:
                 # Log Training Loss and Accuracy
                 self.writer.add_scalar("Loss/Training", avg_epoch_loss, epoch)
                 self.writer.add_scalar("Accuracy/Training", train_accuracy, epoch)
+
+                # Log Validation Loss and Metrics
+                self.writer.add_scalar("Loss/Validation", val_loss, epoch)
+                self.writer.add_scalar("Accuracy/Validation", val_metrics.get("val_accuracy", 0.0), epoch)
+
+                #self.writer.add_scalars('Accuracy',{'train': train_accuracy, 'val': val_metrics.get("val_accuracy", 0.0)},epoch)
+                #self.writer.add_scalars('Loss',{'train': avg_epoch_loss, 'val': val_loss}, epoch)
                 self.writer.add_scalar("Gradients/Norm", avg_grad_norm, epoch)
                 self.log_learning_rate(epoch)
                 if epoch % 5 == 0:  # Log every 5 epochs
                     self.log_confidence_histogram(outputs, epoch)
                 self.log_class_distribution(predictions, epoch)
 
-                # Log Validation Loss and Metrics
-                self.writer.add_scalar("Loss/Validation", val_loss, epoch)
-                self.writer.add_scalar("Accuracy/Validation", val_metrics.get("val_accuracy", 0.0), epoch)
+                
                 
                 # Log MeanIoU and MeanDICE
                 if "MeanIoU" in val_metrics:
@@ -208,6 +213,7 @@ class Trainer:
         with torch.no_grad():
             for inputs, targets, _, _ in val_loader:
                 inputs, targets = inputs.to(self.device), targets.to(self.device)
+
                 outputs = self.model(inputs)
 
                 val_loss += self.loss_fn(outputs, targets).item()

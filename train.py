@@ -9,7 +9,7 @@ from src.dataset import ProjectDatasets
 from src.trainer import Trainer
 from src.models.unet import UNet
 from src.models.deeplabv3plus import DeepLabV3Plus
-from src.utils.helpers import save_checkpoint, load_checkpoint, custom_collate_fn, save_config,load_config
+from src.utils.helpers import save_checkpoint, load_checkpoint, custom_collate_fn, save_config,load_config,log_metrics,log_metrics_test,log_to_file
 from src.metrics import compute_iou, compute_pixel_accuracy, compute_dice_coefficient
 from torchvision.transforms import RandomHorizontalFlip, RandomRotation, ColorJitter, RandomResizedCrop
 
@@ -167,6 +167,30 @@ def main(args):
     class_names=config["class_names"]  # List of class names
 
 )
+    # Log experiment details
+    log_to_file(f"Model: {config['model']['name']}", trainer.experiment_dir)
+    log_to_file(f"Loss Function: {config['loss']['name']}", trainer.experiment_dir)
+    log_to_file(f"Optimizer: {config['optimizer']['name']}", trainer.experiment_dir)
+    log_to_file(f"Learning Rate: {config['optimizer']['params']['lr']}", trainer.experiment_dir)
+    log_to_file(f"Scheduler: {config['scheduler']['name']}", trainer.experiment_dir)
+    log_to_file(f"Scheduler Params: {config['scheduler']['params']}", trainer.experiment_dir)
+    log_to_file(f"Batch Size: {config['hyperparameters']['batch_size']}", trainer.experiment_dir)
+    log_to_file(f"Epochs: {config['hyperparameters']['epochs']}", trainer.experiment_dir)
+    log_to_file(f"Seed: {config['hyperparameters']['seed']}", trainer.experiment_dir)
+
+    # Log dataset details
+    log_to_file("Dataset Details:", trainer.experiment_dir)
+    log_to_file(f"Dataset Path: {config['paths']['data']}", trainer.experiment_dir)
+    log_to_file(f"Train Split: {config['dataset_split']['train']}", trainer.experiment_dir)
+    log_to_file(f"Validation Split: {config['dataset_split']['val']}", trainer.experiment_dir)
+    log_to_file(f"Test Split: {config['dataset_split']['test']}", trainer.experiment_dir)
+
+    # Log augmentation details
+    log_to_file("Augmentation Details:", trainer.experiment_dir)
+    log_to_file(f"Use Augmentation: {config['augmentation']['use_augmentation']}", trainer.experiment_dir)
+    if config['augmentation']['use_augmentation']:
+        for aug, value in config['augmentation']['params'].items():
+            log_to_file(f"  {aug}: {value}", trainer.experiment_dir)
 
     # Save configuration
     save_config(config, trainer.experiment_dir)
@@ -174,11 +198,18 @@ def main(args):
     # Train and Validate
     trainer.fit(train_loader, val_loader, epochs=config["hyperparameters"]["epochs"], start_epoch=start_epoch)
 
+    print("Runing a test set.")
+
+    test_loader = DataLoader(test_dataset, batch_size=config["hyperparameters"]["batch_size"], shuffle=False, num_workers=4)
+    evaluator = Evaluator(model=model, device=device,loss_fn=get_loss_function(config), class_to_color=config["class_to_color"], metrics_config=config["metrics"])
+    metrics,_ = evaluator.evaluate(test_loader)
+    log_metrics_test( trainer.experiment_dir,metrics, class_names=config["class_names"], indent=2, decimals=6)
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Train model for segmentation")
     parser.add_argument("--resume", action="store_true", help="Resume training from checkpoint")
     parser.add_argument("--experiment_name", type=str, default=None, help="Name of the experiment")
     parser.add_argument("--checkpoint_path", type=str, default="checkpoint.pth", help="Path to save/load checkpoint")
-    parser.add_argument("--config", type=str, default="./experiments/configs/config.yaml", help="Path to the configuration YAML file")
+    parser.add_argument("--config", type=str, default="./configs/config.yaml", help="Path to the configuration YAML file")
     args = parser.parse_args()
     main(args)
