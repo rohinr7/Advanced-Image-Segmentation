@@ -146,7 +146,7 @@ def log_metrics(epoch, train_loss, val_loss, train_accuracy, val_metrics, experi
         experiment_dir (str): Path to the experiment directory.
         class_names (list): Optional list of class names for better readability.
     """
-    log_path = os.path.join(experiment_dir, "logs", "train.log")
+    log_path = os.path.join(experiment_dir, "train.log")
 
     # Prepare class names if not provided
     if class_names is None:
@@ -295,3 +295,95 @@ def load_config(config_path):
         config = yaml.safe_load(f)
         print(f"Loaded config type: {type(config)}")  # Should be <class 'dict'>
         return config
+    
+def log_metrics_test(
+    experiment_dir: str,
+    metrics: dict, 
+    class_names: list = None, 
+    indent: int = 2, 
+    decimals: int = 4
+) -> None:
+    """
+    Print metrics in a nicely formatted way and also log them to a file. 
+    If class_names is provided and the sub-key is an integer that corresponds
+    to an index in class_names, print the class name alongside its index.
+
+    :param experiment_dir: Path to the experiment directory where logs should be saved.
+    :param metrics: Dictionary containing nested metrics.
+    :param class_names: List or dict of class names. If list, the index must
+                        match the sub-key. If dict, sub-key must exist as a key.
+    :param indent: Number of spaces to use for indentation.
+    :param decimals: Number of decimal places to show for float values.
+    """
+    # Determine the log file path and ensure the directory exists
+    log_path = os.path.join(experiment_dir, "train.log")
+    os.makedirs(os.path.dirname(log_path), exist_ok=True)
+
+    spacer = " " * indent
+
+    # We'll accumulate all lines in a list, then join them into one string.
+    output_lines = []
+    output_lines.append("Results on Test Data Set :")
+
+    for key, val in metrics.items():
+        if isinstance(val, dict):
+            # Nested metrics dictionary
+            output_lines.append(f"{spacer}{key}:")
+            for sub_key, sub_val in val.items():
+                # Attempt to resolve class name if sub_key is an integer or if it exists in class_names
+                class_label = None
+                if class_names is not None:
+                    if isinstance(class_names, list) and isinstance(sub_key, int) and sub_key < len(class_names):
+                        class_label = class_names[sub_key]
+                    elif isinstance(class_names, dict) and sub_key in class_names:
+                        class_label = class_names[sub_key]
+
+                # Format the output key with possible class name
+                if class_label is not None:
+                    label_str = f"{sub_key} ({class_label})"
+                else:
+                    label_str = str(sub_key)
+
+                # Format float values
+                if isinstance(sub_val, float):
+                    output_lines.append(f"{spacer*2}{label_str}: {sub_val:.{decimals}f}")
+                else:
+                    output_lines.append(f"{spacer*2}{label_str}: {sub_val}")
+        else:
+            # Top-level metric
+            if isinstance(val, float):
+                output_lines.append(f"{spacer}{key}: {val:.{decimals}f}")
+            else:
+                output_lines.append(f"{spacer}{key}: {val}")
+
+    # Create a single string from the lines
+    final_output = "\n".join(output_lines)
+
+    # Print to console
+    print(final_output)
+
+    # Append to the log file
+    with open(log_path, "a") as f:
+        f.write(final_output + "\n\n")
+
+def log_to_file(message, experiment_folder, filename="train.log"):
+    """
+    Logs a message to a specified file within the experiment folder.
+
+    Args:
+        message (str): The message to log.
+        experiment_folder (str): Path to the experiment folder.
+        filename (str): Name of the file to log into (default: "log.txt").
+
+    Returns:
+        None
+    """
+    # Ensure the experiment folder exists
+    os.makedirs(experiment_folder, exist_ok=True)
+
+    # Construct the full file path
+    file_path = os.path.join(experiment_folder, filename)
+
+    # Append the message to the file
+    with open(file_path, "a") as log_file:
+        log_file.write(message + "\n")

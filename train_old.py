@@ -5,11 +5,90 @@ from torchvision.transforms import Compose, ToTensor, Normalize
 import torch.optim as optim
 from src.dataset import ProjectDatasets
 from src.trainer import Trainer
-from src.models.UNet import UNet
+from models.unet import UNet
 from src.utils.helpers import save_checkpoint, load_checkpoint, custom_collate_fn, save_config
 import random
 import numpy as np
 
+from src.models.unet import UNet
+from src.models.deeplabv3plus import DeepLabV3Plus
+
+def get_model(config):
+    if config["model"]["name"] == "UNet":
+        return UNet(
+            in_channels=config["hyperparameters"]["input_channels"],
+            out_channels=config["hyperparameters"]["output_channels"],
+        )
+    elif config["model"]["name"] == "DeepLabV3Plus":
+        return DeepLabV3Plus(
+            in_channels=config["hyperparameters"]["input_channels"],
+            out_channels=config["hyperparameters"]["output_channels"],
+        )
+    else:
+        raise ValueError(f"Unsupported model: {config['model']['name']}")
+
+import torch.nn as nn
+
+def get_loss_function(config):
+    loss_name = config["loss"]["name"]
+    params = config["loss"].get("params", {})
+    if loss_name == "CrossEntropyLoss":
+        return nn.CrossEntropyLoss(**params)
+    elif loss_name == "FocalLoss":
+        from src.utils.losses import FocalLoss
+        return FocalLoss(**params)
+    else:
+        raise ValueError(f"Unsupported loss function: {loss_name}")
+
+def get_optimizer(config, model):
+    optimizer_name = config["optimizer"]["name"]
+    params = config["optimizer"]["params"]
+    if optimizer_name == "Adam":
+        return torch.optim.Adam(model.parameters(), **params)
+    elif optimizer_name == "SGD":
+        return torch.optim.SGD(model.parameters(), **params)
+    else:
+        raise ValueError(f"Unsupported optimizer: {optimizer_name}")
+
+def get_scheduler(config, optimizer):
+    scheduler_name = config["scheduler"]["name"]
+    params = config["scheduler"]["params"]
+    if scheduler_name == "StepLR":
+        return torch.optim.lr_scheduler.StepLR(optimizer, **params)
+    elif scheduler_name == "CosineAnnealingLR":
+        return torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, **params)
+    else:
+        raise ValueError(f"Unsupported scheduler: {scheduler_name}")
+
+from src.utils.metrics import compute_iou, compute_pixel_accuracy, compute_dice_coefficient
+
+def get_metrics(config, predictions, targets):
+    results = {}
+    for metric in config["metrics"]:
+        name = metric["name"]
+        if name == "IoU":
+            results["IoU"] = compute_iou(predictions, targets)
+        elif name == "PixelAccuracy":
+            results["PixelAccuracy"] = compute_pixel_accuracy(predictions, targets)
+        elif name == "DICE":
+            results["DICE"] = compute_dice_coefficient(predictions, targets)
+        else:
+            raise ValueError(f"Unsupported metric: {name}")
+    return results
+
+from torchvision.transforms import Compose, RandomHorizontalFlip, RandomRotation, ColorJitter, ToTensor
+
+def get_transforms(config):
+    transforms = [ToTensor()]
+    if config["augmentation"]["use_augmentation"]:
+        params = config["augmentation"]["params"]
+        if params.get("horizontal_flip", False):
+            transforms.append(RandomHorizontalFlip())
+        if params.get("rotation_range", 0) > 0:
+            transforms.append(RandomRotation(params["rotation_range"]))
+        if params.get("brightness_adjust", 0) > 0:
+            transforms.append(ColorJitter(brightness=params["brightness_adjust"]))
+    return Compose(transforms)
 
 def main(args):
     # Set seed for reproducibility
