@@ -3,7 +3,7 @@ import sys
 
 def main():
     # Define the valid options you want to allow
-    valid_options = [1, 2 , 3]  # Adding more valid options
+    valid_options = [1, 2 , 3,4,5]  # Adding more valid options
 
     if len(sys.argv) != 2:
         print("Usage: python3 execute_cremi.py <number>")
@@ -23,14 +23,23 @@ def main():
     execution_order = {
         1: [  
             f"python train.py --config configs/config_CombinedLoss.yaml",
-            f"python train.py --config configs/config_dice_loss.yaml ",
+            f"python train.py --config configs/config_focal_loss.yaml",
         ],
         2: [
-            f"python train.py --config configs/config_focal_loss.yaml",
-            f"python train.py --config configs/config_TverskyLoss.yaml ",
+            f"python train.py --config configs/deeplab_combine.yaml",
+            f"python train.py --config configs/deeplab_cross.yaml",
         ],
         3: [
             f"python train.py --config configs/config.yaml ",
+            f"python train.py --config configs/deeplab_dice.yaml",
+        ],
+        4: [
+            f"python train.py --config configs/config_dice_loss.yaml ",
+            f"python train.py --config configs/config_TverskyLoss.yaml ",
+        ],
+        5: [
+            f"python train.py --config configs/deeplab_focal.yaml ",
+            f"python train.py --config configs/deeplab_dice_npretrain.yaml",
         ]
     }
 

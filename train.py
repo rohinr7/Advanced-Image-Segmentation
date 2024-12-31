@@ -18,67 +18,9 @@ from src.utils.transform_utils import get_transforms
 from src.utils.helpers import load_config
 from src.evaluator import Evaluator
 
+from src.utils.mapping import CLASS_TO_COLOR
 
-# # Helper functions for dynamic model, loss, optimizer, and scheduler setup
-# def get_model(config):
-#     if config["model"]["name"] == "UNet":
-#         return UNet(
-#             in_channels=config["hyperparameters"]["input_channels"],
-#             out_channels=config["hyperparameters"]["output_channels"],
-#         )
-#     elif config["model"]["name"] == "DeepLabV3Plus":
-#         return DeepLabV3Plus(
-#             in_channels=config["hyperparameters"]["input_channels"],
-#             out_channels=config["hyperparameters"]["output_channels"],
-#         )
-#     else:
-#         raise ValueError(f"Unsupported model: {config['model']['name']}")
-
-# def get_loss_function(config):
-#     loss_name = config["loss"]["name"]
-#     params = config["loss"].get("params", {})
-#     if loss_name == "CrossEntropyLoss":
-#         return torch.nn.CrossEntropyLoss(**params)
-#     elif loss_name == "FocalLoss":
-#         from src.losses import FocalLoss
-#         return FocalLoss(**params)
-#     else:
-#         raise ValueError(f"Unsupported loss function: {loss_name}")
-
-# def get_optimizer(config, model):
-#     optimizer_name = config["optimizer"]["name"]
-#     params = config["optimizer"]["params"]
-#     if optimizer_name == "Adam":
-#         print(model.parameters())
-#         return torch.optim.Adam(model.parameters(), **params)
-#     elif optimizer_name == "SGD":
-#         return torch.optim.SGD(model.parameters(), **params)
-#     else:
-#         raise ValueError(f"Unsupported optimizer: {optimizer_name}")
-
-# def get_scheduler(config, optimizer):
-#     scheduler_name = config["scheduler"]["name"]
-#     params = config["scheduler"]["params"]
-#     if scheduler_name == "StepLR":
-#         return torch.optim.lr_scheduler.StepLR(optimizer, **params)
-#     elif scheduler_name == "CosineAnnealingLR":
-#         return torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, **params)
-#     else:
-#         raise ValueError(f"Unsupported scheduler: {scheduler_name}")
-    
-# def get_transforms(config):
-#     transforms = [ToTensor()]  # Convert to tensor
-#     if config["augmentation"]["use_augmentation"]:
-#         aug_params = config["augmentation"]["params"]
-#         if aug_params.get("horizontal_flip", False):
-#             transforms.append(RandomHorizontalFlip())  # Horizontal flip
-#         if aug_params.get("rotation_range", 0) > 0:
-#             transforms.append(RandomRotation(aug_params["rotation_range"]))  # Random rotation
-#         if aug_params.get("brightness_adjust", 0) > 0:
-#             transforms.append(ColorJitter(brightness=aug_params["brightness_adjust"]))  # Brightness adjustment
-#     # Add normalization
-#     transforms.append(Normalize(mean=[0.5], std=[0.5]))  
-#     return Compose(transforms)
+from datetime import datetime, timedelta
 
 def main(args):
  
@@ -150,8 +92,9 @@ def main(args):
     #     experiment_name=args.experiment_name,
     #     early_stopping_config=config.get("early_stopping", None), 
     #     logging_config=config.get("logging", {}),
-    #     class_to_color=config["class_to_color"]
+    #     class_to_color=CLASS_TO_COLOR
     # )
+    num_classes=config["hyperparameters"]["output_channels"]
 
     trainer = Trainer(
     model=model,
@@ -163,7 +106,7 @@ def main(args):
     logging_config=config["logging"],
     early_stopping_config=config["early_stopping"],
     metrics_config=config["metrics"],
-    class_to_color=config["class_to_color"],
+    num_classes=num_classes,
     class_names=config["class_names"]  # List of class names
 
 )
@@ -195,15 +138,41 @@ def main(args):
     # Save configuration
     save_config(config, trainer.experiment_dir)
 
+    # Start Training Timer
+    train_start_time = datetime.now()
+    print(f"Training started at {train_start_time}")
+
     # Train and Validate
     trainer.fit(train_loader, val_loader, epochs=config["hyperparameters"]["epochs"], start_epoch=start_epoch)
+
+    # End Training Timer
+    train_end_time = datetime.now()
+    print(f"Training ended at {train_end_time}")
+    train_duration = train_end_time - train_start_time
+    print(f"Training duration: {str(train_duration)}")
+    log_to_file(f"Training started at: {train_start_time}", trainer.experiment_dir)
+    log_to_file(f"Training ended at: {train_end_time}", trainer.experiment_dir)
+    log_to_file(f"Training duration: {str(train_duration)}", trainer.experiment_dir)
+
 
     print("Runing a test set.")
 
     test_loader = DataLoader(test_dataset, batch_size=config["hyperparameters"]["batch_size"], shuffle=False, num_workers=4)
-    evaluator = Evaluator(model=model, device=device,loss_fn=get_loss_function(config), class_to_color=config["class_to_color"], metrics_config=config["metrics"])
+    # Start Testing Timer
+    test_start_time = datetime.now()
+    print(f"Testing started at {test_start_time}")
+    evaluator = Evaluator(model=model, device=device,loss_fn=get_loss_function(config), num_classes=num_classes, metrics_config=config["metrics"])
     metrics,_ = evaluator.evaluate(test_loader)
+    # End Testing Timer
+    test_end_time = datetime.now()
     log_metrics_test( trainer.experiment_dir,metrics, class_names=config["class_names"], indent=2, decimals=6)
+    print(f"Testing ended at {test_end_time}")
+    test_duration = test_end_time - test_start_time
+    print(f"Testing duration: {str(test_duration)}")
+    log_to_file(f"Testing started at: {test_start_time}", trainer.experiment_dir)
+    log_to_file(f"Testing ended at: {test_end_time}", trainer.experiment_dir)
+    log_to_file(f"Testing duration: {str(test_duration)}", trainer.experiment_dir)
+    
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Train model for segmentation")
