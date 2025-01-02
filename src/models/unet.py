@@ -72,4 +72,4 @@ class UNet(nn.Module):
         dec1 = dec1[:, :, :h, :w]  # Crop back to original height and width
 
         # Output
-        return torch.sigmoid(self.out_conv(dec1))
+        return F.softmax(self.out_conv(dec1), dim=1)#torch.sigmoid(self.out_conv(dec1))

@@ -1,26 +1,26 @@
 import numpy as np
 
-def rgb_to_class_ids(rgb_image, class_to_color):
-    """
-    Convert an RGB image to class IDs based on the class-to-color mapping.
-    Optimized for vectorized operations.
+# def rgb_to_class_ids(rgb_image, class_to_color):
+#     """
+#     Convert an RGB image to class IDs based on the class-to-color mapping.
+#     Optimized for vectorized operations.
 
-    Args:
-        rgb_image (np.ndarray): RGB image of shape (H, W, 3).
-        class_to_color (dict): Mapping from class IDs to RGB colors.
+#     Args:
+#         rgb_image (np.ndarray): RGB image of shape (H, W, 3).
+#         class_to_color (dict): Mapping from class IDs to RGB colors.
 
-    Returns:
-        np.ndarray: Class ID map of shape (H, W).
-    """
-    color_to_class = {tuple(v): k for k, v in class_to_color.items()}
-    reshaped_image = rgb_image.reshape(-1, 3)
-    class_ids_flat = np.zeros(reshaped_image.shape[0], dtype=np.int32)
+#     Returns:
+#         np.ndarray: Class ID map of shape (H, W).
+#     """
+#     color_to_class = {tuple(v): k for k, v in class_to_color.items()}
+#     reshaped_image = rgb_image.reshape(-1, 3)
+#     class_ids_flat = np.zeros(reshaped_image.shape[0], dtype=np.int32)
 
-    for color, class_id in color_to_class.items():
-        matches = np.all(reshaped_image == color, axis=1)
-        class_ids_flat[matches] = class_id
+#     for color, class_id in color_to_class.items():
+#         matches = np.all(reshaped_image == color, axis=1)
+#         class_ids_flat[matches] = class_id
 
-    return class_ids_flat.reshape(rgb_image.shape[:2])
+#     return class_ids_flat.reshape(rgb_image.shape[:2])
 
 
 def compute_iou(predictions_class_ids, targets_class_ids, num_classes):

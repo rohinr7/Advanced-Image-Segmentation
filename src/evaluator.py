@@ -1,12 +1,12 @@
 import torch
 import numpy as np
 from src.metrics import compute_iou, compute_pixel_accuracy, compute_dice_coefficient
-from src.utils.helpers import map_classes_to_colors
+from src.utils.mapping import classIndexToMask
 import os
 import matplotlib.pyplot as plt
 
 class Evaluator:
-    def __init__(self, model, device,loss_fn, class_to_color, metrics_config):
+    def __init__(self, model, device,loss_fn, num_classes, metrics_config):
         """
         Initializes the evaluator.
 
@@ -19,8 +19,7 @@ class Evaluator:
         self.model = model
         self.device = device
         self.loss_fn = loss_fn
-        self.class_to_color = class_to_color
-        self.num_classes = len(class_to_color)
+        self.num_classes = num_classes
         self.metrics_config = metrics_config
 
     def evaluate_batch(self, predictions, targets):
@@ -112,10 +111,10 @@ class Evaluator:
                 # Optionally save RGB visualizations
                 if save_rgb and output_dir:
                     rgb_predictions = np.stack([
-                        map_classes_to_colors(predictions_np[i], self.class_to_color) for i in range(predictions_np.shape[0])
+                        classIndexToMask(predictions_np[i]) for i in range(predictions_np.shape[0])
                     ])
                     rgb_targets = np.stack([
-                        map_classes_to_colors(targets_np[i], self.class_to_color) for i in range(targets_np.shape[0])
+                        classIndexToMask(targets_np[i]) for i in range(targets_np.shape[0])
                     ])
                     for i, (rgb_pred, rgb_target) in enumerate(zip(rgb_predictions, rgb_targets)):
                         pred_path = os.path.join(output_dir, f"batch_{batch_idx + 1}_sample_{i}_pred.png")

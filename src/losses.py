@@ -18,7 +18,7 @@ class CombinedLoss(nn.Module):
     def __init__(self, weight=0.5):
         super().__init__()
         self.weight = weight
-        self.dice_loss = DiceLoss(mode='multiclass')
+        self.dice_loss = DiceLoss()  # Removed mode='multiclass'
         self.ce_loss = nn.CrossEntropyLoss()
 
     def forward(self, logits, targets):

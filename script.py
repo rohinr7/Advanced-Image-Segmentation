@@ -3,7 +3,7 @@ import sys
 
 def main():
     # Define the valid options you want to allow
-    valid_options = [1, 2 , 3]  # Adding more valid options
+    valid_options = [1, 2 , 3,4,5,6,7,8,9,10]  # Adding more valid options
 
     if len(sys.argv) != 2:
         print("Usage: python3 execute_cremi.py <number>")
@@ -22,16 +22,43 @@ def main():
     # Define the execution orders based on the number input
     execution_order = {
         1: [  
-            f"python train.py --config configs/config_CombinedLoss.yaml",
-            f"python train.py --config configs/config_dice_loss.yaml ",
+            f"python train.py --config configs/config.yaml ",
         ],
         2: [
-            f"python train.py --config configs/config_focal_loss.yaml",
-            f"python train.py --config configs/config_TverskyLoss.yaml ",
+            #f"python train.py --config configs/config_dice_loss.yaml ",
+            f"python train.py --config configs/unet_v2_combinedLoss.yaml",
+            f"python train.py --config configs/unet_resnet_combinedLoss.yaml",
         ],
         3: [
-            f"python train.py --config configs/config.yaml ",
-        ]
+            f"python train.py --config configs/deeplab_dice.yaml",
+        ],
+        4: [
+            f"python train.py --config configs/deeplab_combine.yaml ",
+        ],
+        5: [
+            f"python train.py --config configs/deeplab_focal.yaml ",
+        ],
+        6: [
+            f"python train.py --config configs/deeplab_dice_npretrain.yaml",
+        ],
+        7: [
+            f"python train.py --config configs/deeplab_cross.yaml",
+        ],
+        8: [
+            f"python train.py --config configs/unet_resnet_cross.yaml",
+            f"python train.py --config configs/unet_resnet_focal_loss.yaml",
+            
+        ],
+        9: [
+            f"python train.py --config configs/unet_resnet_dice_loss.yaml",
+            f"python train.py --config configs/unet_v2_dice_loss.yaml",
+            
+        ],
+        10: [
+            f"python train.py --config configs/unet_v2_cross.yaml",
+            f"python train.py --config configs/unet_v2_focal_loss.yaml",
+            
+        ],
     }
 
     # Get the list of commands for the selected option
