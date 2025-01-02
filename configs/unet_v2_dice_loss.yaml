@@ -1,4 +1,4 @@
-experiment_name: "deeplab_cross"
+experiment_name: "unetv2_dice"
 
 paths:
   data: "/net/ens/am4ip/datasets/project-dataset"
@@ -15,7 +15,7 @@ data:
 
 hyperparameters:
   batch_size: 16
-  learning_rate: 1e-4
+  learning_rate: 1e-5
   epochs: 50
   seed: 42
   input_channels: 3
@@ -23,18 +23,15 @@ hyperparameters:
   mixed_precision: true
 
 model:
-  name: "DeepLabV3Plus"
-  backbone: "resnet"  # Options: resnet, mobilenet
-  pretrained: true    # Use pretrained weights
-  output_stride: 16   # Stride for downsampling in the backbone
-  decoder: "default"  # Use default DeepLabV3+ decoder
+  name: "UNetImproved"  # Options: UNet, DeepLabV3Plus, etc.
+  pretrained: false
 
 loss:
-  name: "CrossEntropyLoss"
-  params: {} 
+  name: "DiceLoss"  # Options: CrossEntropyLoss, FocalLoss, etc.
+  params: {}  # Additional parameters for the loss function
 
 optimizer:
-  name: "AdamW"
+  name: "Adam"  # Options: Adam, SGD, etc.
   params:
     lr: 0.0001
     weight_decay: 0.0001
@@ -42,8 +39,8 @@ optimizer:
 scheduler:
   name: "CosineAnnealingLR"
   params:
-    T_max: 20
-    eta_min: 0.00001
+    T_max: 10
+    eta_min: 0.000001
 
 metrics:
   iou: true
@@ -52,7 +49,7 @@ metrics:
 
 early_stopping:
   enabled: true
-  patience: 10
+  patience: 5
   metric: "val_loss"
 
 
@@ -75,11 +72,15 @@ early_stopping:
 
 
 augmentation:
-  use_augmentation: true
+  use_augmentation: false
   params:
     horizontal_flip: true
-    rotation_range: 10
+    rotation_range: 15
+    brightness_adjust: 0.2
+    contrast_adjust: 0.2
     scale_range: [0.8, 1.2]
+    gaussian_noise: 0.05
+    random_crop: [256, 256]
 
 logging:
   log_level: "INFO"  # Options: DEBUG, INFO, WARNING, ERROR
@@ -89,6 +90,7 @@ logging:
 evaluation:
   use_test_set: true
   batch_size: 16
+
 
 class_names:
   - Unlabeled

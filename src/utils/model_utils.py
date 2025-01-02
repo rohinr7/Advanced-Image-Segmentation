@@ -2,6 +2,8 @@
 import torch
 from src.models.unet import UNet
 from src.models.deeplabv3plus import DeepLabV3Plus
+from src.models.unet_resnet import UNetWithResNet
+from src.models.unet_v2 import UNetImproved
 
 def get_model(config):
     if config["model"]["name"] == "UNet":
@@ -15,6 +17,19 @@ def get_model(config):
             in_channels=config["hyperparameters"]["input_channels"],
             backbone=config["model"].get("backbone", "resnet"),
             pretrained=config["model"].get("pretrained", True),
+        )
+    elif config["model"]["name"] == "UNetWithResNet":
+        return UNetWithResNet(
+            in_channels=config["hyperparameters"]["input_channels"],
+            out_channels=config["hyperparameters"]["output_channels"],
+            pretrained=config["model"].get("pretrained", True),
+            resnet_variant=config["model"].get("backbone", "resnet50"),
+            use_dropout=config["model"].get("use_dropout", True),
+        )
+    elif config["model"]["name"] == "UNetImproved":
+        return UNetImproved(
+            in_channels=config["hyperparameters"]["input_channels"],
+            out_channels=config["hyperparameters"]["output_channels"],
         )
     else:
         raise ValueError(f"Unsupported model: {config['model']['name']}")

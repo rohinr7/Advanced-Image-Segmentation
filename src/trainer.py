@@ -11,8 +11,9 @@ def setup_logging(log_level="INFO"):
     logging.basicConfig(level=log_level, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
+
 class Trainer:
-    def __init__(self, model, loss_fn, optimizer, scheduler=None, device=None, experiment_name=None, logging_config=None, early_stopping_config=None, metrics_config=None, num_classes=None,class_names=None):
+    def __init__(self, model, loss_fn, optimizer,hyperparameters=None, scheduler=None, device=None, experiment_name=None, logging_config=None, early_stopping_config=None, metrics_config=None, num_classes=None,class_names=None):
         setup_logging(log_level=logging_config.get("log_level", "INFO"))
         self.tensorboard_enabled = logging_config.get("tensorboard", True)
 
@@ -21,8 +22,10 @@ class Trainer:
         self.optimizer = optimizer
         self.scheduler = scheduler
         self.device = device or "cpu"
-        self.writer = SummaryWriter() if self.tensorboard_enabled else None
-
+        timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")  # Get the current timestamp
+        self.experiment_dir = os.path.join("experiments", f"{experiment_name}_{timestamp}" if experiment_name else f"experiment_{timestamp}")
+        self.writer = SummaryWriter(log_dir=self.experiment_dir) if self.tensorboard_enabled else None
+        self.hyperparameters = hyperparameters
         self.metrics_config = metrics_config
         self.num_classes = num_classes
         if class_names is None:
@@ -41,12 +44,35 @@ class Trainer:
         self.early_stop = False
 
         timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-        self.experiment_dir = os.path.join("experiments", experiment_name or f"experiment_{timestamp}")
+        
         os.makedirs(self.experiment_dir, exist_ok=True)
         os.makedirs(os.path.join(self.experiment_dir, "checkpoints"), exist_ok=True)
         os.makedirs(os.path.join(self.experiment_dir, "logs"), exist_ok=True)
         os.makedirs(os.path.join(self.experiment_dir, "results"), exist_ok=True)
 
+    def log_model_info(self):
+        """Log model information (e.g., model name, loss function, optimizer) to TensorBoard."""
+        model_info = f"Model: {self.model.__class__.__name__}\n"
+        model_info += f"Loss Function: {self.loss_fn.__class__.__name__}\n"
+        model_info += f"Optimizer: {self.optimizer.__class__.__name__}\n"
+        
+        # If a scheduler exists, log its name, otherwise, mention "None"
+        if self.scheduler:
+            model_info += f"Scheduler: {self.scheduler.__class__.__name__}\n"
+        else:
+            model_info += "Scheduler: None\n"
+
+        # Log model info as text in TensorBoard
+        self.writer.add_text("Model Information", model_info)
+
+        # Add optimizer name to the hyperparameters dictionary
+        hyperparameters_with_optimizer = {**self.hyperparameters, "optimizer_name": self.optimizer.__class__.__name__}
+
+        # Log hyperparameters including optimizer name using add_hparams
+        self.writer.add_hparams(
+            hyperparameters_with_optimizer, 
+            {"hparam/metric": 0.0}  # You can replace this with the actual metric if needed
+        )
     def compute_gradient_norm(self):
         """
         Compute the gradient norm for the model parameters.
@@ -103,6 +129,8 @@ class Trainer:
         best_model_state = None
         best_metric = float("inf") if self.metric == "val_loss" else float("-inf")
         best_epoch = 0
+        if self.tensorboard_enabled:
+            self.log_model_info()
 
         for epoch in range(start_epoch + 1, epochs + 1):
             print(f"Epoch {epoch}/{epochs}")

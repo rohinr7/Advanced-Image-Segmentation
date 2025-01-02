@@ -14,4 +14,6 @@ __pycache__/
 # Ignore other temporary files or IDE files
 .vscode/
 .idea/
-*.log
+#*.log
+output*
+checkpoints/
