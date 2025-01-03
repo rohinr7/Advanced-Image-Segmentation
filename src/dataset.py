@@ -4,7 +4,7 @@ from PIL import Image
 import os
 from torchvision.transforms.functional import to_tensor
 import numpy as np
-
+import torchvision.transforms as T
 
 def mask_to_class_index(mask):
     """Converts an RGB mask to a class index mask using vectorized operations."""
@@ -110,3 +110,34 @@ class ProjectDatasets(Dataset):
             mask = torch.from_numpy(mask.astype(np.int64))
         image_name = os.path.basename(image_path)
         return image, mask, source ,image_name
+
+
+class RainyDataset(Dataset):
+    def __init__(self, root_path, transform=None):
+        self.dataset_path = os.path.join(root_path, "ALIGNED_PAIRS")
+        self.droplet_images_path = os.path.join(self.dataset_path, "CG_DROPLETS")
+        self.clean_images_path = os.path.join(self.dataset_path, "CLEAN")
+        
+        self.droplet_images = sorted(os.listdir(self.droplet_images_path))
+        self.clean_images = sorted(os.listdir(self.clean_images_path))
+        
+        self.transform = transform
+
+    def __len__(self):
+        return len(self.droplet_images)
+
+    def __getitem__(self, idx):
+        droplet_image_path = os.path.join(self.droplet_images_path, self.droplet_images[idx])
+        clean_image_path = os.path.join(self.clean_images_path, self.clean_images[idx])
+
+        # droplet_image = Image.open(droplet_image_path).convert("RGB")
+        # clean_image = Image.open(clean_image_path).convert("RGB")
+        droplet_image = Image.open(droplet_image_path)
+        clean_image = Image.open(clean_image_path)
+
+        if self.transform:
+            droplet_image = self.transform(droplet_image)
+            clean_image = self.transform(clean_image)
+        
+        return droplet_image, clean_image
+
