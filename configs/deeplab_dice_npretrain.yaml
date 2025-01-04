@@ -51,7 +51,7 @@ metrics:
   dice: true
 
 early_stopping:
-  enabled: true
+  enabled: false
   patience: 10
   metric: "val_loss"
 

@@ -1,0 +1,116 @@
+{
+    "experiment_name": "deeplab_focal",
+    "paths": {
+        "data": "/net/ens/am4ip/datasets/project-dataset"
+    },
+    "dataset_split": {
+        "train": 0.8,
+        "val": 0.1,
+        "test": 0.1
+    },
+    "data": {
+        "shuffle": true,
+        "num_workers": 4,
+        "pin_memory": true
+    },
+    "hyperparameters": {
+        "batch_size": 16,
+        "learning_rate": "1e-4",
+        "epochs": 50,
+        "seed": 42,
+        "input_channels": 3,
+        "output_channels": 34,
+        "mixed_precision": true
+    },
+    "model": {
+        "name": "DeepLabV3Plus",
+        "backbone": "resnet",
+        "pretrained": true,
+        "output_stride": 16,
+        "decoder": "default"
+    },
+    "loss": {
+        "name": "FocalLoss",
+        "params": {}
+    },
+    "optimizer": {
+        "name": "AdamW",
+        "params": {
+            "lr": 0.0001,
+            "weight_decay": 0.0001
+        }
+    },
+    "scheduler": {
+        "name": "CosineAnnealingLR",
+        "params": {
+            "T_max": 20,
+            "eta_min": 1e-05
+        }
+    },
+    "metrics": {
+        "iou": true,
+        "pixel_accuracy": true,
+        "dice": true
+    },
+    "early_stopping": {
+        "enabled": true,
+        "patience": 10,
+        "metric": "val_loss"
+    },
+    "augmentation": {
+        "use_augmentation": true,
+        "params": {
+            "horizontal_flip": true,
+            "rotation_range": 10,
+            "scale_range": [
+                0.8,
+                1.2
+            ]
+        }
+    },
+    "logging": {
+        "log_level": "INFO",
+        "tensorboard": true,
+        "gradient_monitoring": true
+    },
+    "evaluation": {
+        "use_test_set": true,
+        "batch_size": 16
+    },
+    "class_names": [
+        "Unlabeled",
+        "Unused",
+        "Unused",
+        "Unused",
+        "Static",
+        "Dynamic",
+        "Ground",
+        "Road",
+        "Sidewalk",
+        "Parking",
+        "Rail track",
+        "Building",
+        "Wall",
+        "Fence",
+        "Guard rail",
+        "Bridge",
+        "Tunnel",
+        "Pole",
+        "Pole group",
+        "Traffic light",
+        "Traffic sign",
+        "Vegetation",
+        "Terrain",
+        "Sky",
+        "Person",
+        "Rider",
+        "Car",
+        "Truck",
+        "Bus",
+        "Caravan",
+        "Trailer",
+        "Train",
+        "Motorcycle",
+        "Bicycle"
+    ]
+}

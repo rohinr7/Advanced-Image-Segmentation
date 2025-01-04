@@ -1,9 +1,10 @@
 import torch
 import numpy as np
-from src.metrics import compute_iou, compute_pixel_accuracy, compute_dice_coefficient
+from src.metrics import compute_iou,compute_iou_for_target_classes_only, compute_pixel_accuracy, compute_dice_coefficient
 from src.utils.mapping import classIndexToMask
 import os
 import matplotlib.pyplot as plt
+import segmentation_models_pytorch as smp
 
 class Evaluator:
     def __init__(self, model, device,loss_fn, num_classes, metrics_config):
@@ -33,9 +34,27 @@ class Evaluator:
         Returns:
             dict: Dictionary containing computed metrics based on the enabled configuration.
         """
+        predictions_tensor = torch.from_numpy(predictions)
+        targets_tensor = torch.from_numpy(targets)
         results = {}
         if self.metrics_config.get("iou", False):
-            results["IoU"], results["MeanIoU"] = compute_iou(predictions, targets, self.num_classes)
+            # Get stats (TP, FP, FN, TN)
+            # Move tensors to the same device as your model, e.g. 'cuda' if using GPUs
+            device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+            predictions_tensor = predictions_tensor.to(device)
+            targets_tensor = targets_tensor.to(device)
+            TP, FP, FN, TN = smp.metrics.get_stats(
+                output=predictions_tensor,
+                target=targets_tensor,
+                mode="multiclass",
+                ignore_index=-1,  # If needed, ignore certain index (e.g., background)
+                num_classes=self.num_classes
+            )
+            
+            # Compute IoU using the stats
+            iou = smp.metrics.iou_score(TP, FP, FN, TN, reduction="micro")
+            results["IoUoverall"] = iou
+            results["IoU"], results["MeanIoU"] = compute_iou_for_target_classes_only(predictions, targets, self.num_classes)
         if self.metrics_config.get("pixel_accuracy", False):
             results["PixelAccuracy"] = compute_pixel_accuracy(predictions, targets)
         if self.metrics_config.get("dice", False):
@@ -68,6 +87,7 @@ class Evaluator:
         if self.metrics_config.get("iou", False):
             total_metrics["IoU"] = {cls: [] for cls in range(self.num_classes)}
             total_metrics["MeanIoU"] = []
+            total_metrics["IoUoverall"] = []
         if self.metrics_config.get("pixel_accuracy", False):
             total_metrics["PixelAccuracy"] = []
         if self.metrics_config.get("dice", False):

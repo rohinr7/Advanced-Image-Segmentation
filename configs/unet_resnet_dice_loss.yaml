@@ -41,7 +41,7 @@ optimizer:
 scheduler:
   name: "CosineAnnealingLR"
   params:
-    T_max: 10
+    T_max: 50
     eta_min: 0.000001
 
 metrics:
@@ -50,7 +50,7 @@ metrics:
   dice: true
 
 early_stopping:
-  enabled: true
+  enabled: false
   patience: 5
   metric: "val_loss"
 

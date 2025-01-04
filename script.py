@@ -19,45 +19,50 @@ def main():
         print("Invalid input. Please enter a valid number.")
         sys.exit(1)
 
+
     # Define the execution orders based on the number input
     execution_order = {
         1: [  
-            f"python train.py --config configs/config.yaml ",
+            f"python train.py --config configs/config_CombinedLoss.yaml",
+            f"python train.py --config configs/config_dice_loss.yaml",
+
         ],
         2: [
-            #f"python train.py --config configs/config_dice_loss.yaml ",
-            f"python train.py --config configs/unet_v2_combinedLoss.yaml",
-            f"python train.py --config configs/unet_resnet_combinedLoss.yaml",
+            f"python train.py --config configs/config_focal_loss_v1.yaml",
+            f"python train.py --config configs/config_focal_loss.yaml",
         ],
         3: [
-            f"python train.py --config configs/deeplab_dice.yaml",
-        ],
-        4: [
-            f"python train.py --config configs/deeplab_combine.yaml ",
-        ],
-        5: [
-            f"python train.py --config configs/deeplab_focal.yaml ",
-        ],
-        6: [
-            f"python train.py --config configs/deeplab_dice_npretrain.yaml",
-        ],
-        7: [
+            f"python train.py --config configs/deeplab_combine.yaml",
             f"python train.py --config configs/deeplab_cross.yaml",
         ],
-        8: [
+        4: [
+            f"python train.py --config configs/deeplab_dice.yaml",
+            f"python train.py --config configs/deeplab_focal.yaml",
+        ],
+        5: [
+            f"python train.py --config configs/unet_cross_v2.yaml",
+            f"python train.py --config configs/unet_cross_v3.yaml",
+        ],
+        6: [
+            f"python train.py --config configs/unet_cross.yaml",
+            f"python train.py --config configs/unet_resnet_combinedLoss.yaml",
+        ],
+        7: [
             f"python train.py --config configs/unet_resnet_cross.yaml",
+            f"python train.py --config configs/unet_resnet_dice_loss.yaml",
+        ],
+        8: [
             f"python train.py --config configs/unet_resnet_focal_loss.yaml",
+            f"python train.py --config configs/unet_v2_combinedLoss.yaml",
             
         ],
         9: [
-            f"python train.py --config configs/unet_resnet_dice_loss.yaml",
+            f"python train.py --config configs/unet_v2_cross.yaml",
             f"python train.py --config configs/unet_v2_dice_loss.yaml",
             
         ],
         10: [
-            f"python train.py --config configs/unet_v2_cross.yaml",
-            f"python train.py --config configs/unet_v2_focal_loss.yaml",
-            
+            f"python train.py --config configs/unet_v2_focal_loss.yaml",      
         ],
     }
 

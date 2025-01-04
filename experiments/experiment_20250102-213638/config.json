@@ -1,0 +1,157 @@
+{
+    "experiment_name": "experiment1",
+    "paths": {
+        "data": "/net/ens/am4ip/datasets/project-dataset"
+    },
+    "dataset_split": {
+        "train": 0.8,
+        "val": 0.1,
+        "test": 0.1
+    },
+    "data": {
+        "shuffle": true,
+        "num_workers": 4,
+        "pin_memory": true
+    },
+    "hyperparameters": {
+        "batch_size": 16,
+        "learning_rate": "1e-5",
+        "epochs": 50,
+        "seed": 42,
+        "input_channels": 3,
+        "output_channels": 34,
+        "mixed_precision": true
+    },
+    "model": {
+        "name": "UNet",
+        "pretrained": true
+    },
+    "loss": {
+        "name": "CrossEntropyLoss",
+        "params": {
+            "weight": [
+                3.999999989900971e-06,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                9.999999974752427e-07,
+                2.099999983329326e-05,
+                0.0,
+                0.0,
+                1.9999999949504854e-06,
+                5.400000009103678e-05,
+                3.199999991920777e-05,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                9.40000027185306e-05,
+                0.0004250000056345016,
+                8.600000001024455e-05,
+                1.9999999949504854e-06,
+                2.300000051036477e-05,
+                1.9999999949504854e-06,
+                0.00019099999917671084,
+                0.008351000025868416,
+                7.000000096013537e-06,
+                0.0002500000118743628,
+                0.000155999994603917,
+                0.46449100971221924,
+                0.49706199765205383,
+                0.00016399999731220305,
+                0.00291600008495152,
+                0.02566700056195259
+            ]
+        }
+    },
+    "optimizer": {
+        "name": "Adam",
+        "params": {
+            "lr": 0.0001,
+            "weight_decay": 0.0001
+        }
+    },
+    "scheduler": {
+        "name": "CosineAnnealingLR",
+        "params": {
+            "T_max": 10,
+            "eta_min": 1e-06
+        }
+    },
+    "metrics": {
+        "iou": true,
+        "pixel_accuracy": true,
+        "dice": true
+    },
+    "early_stopping": {
+        "enabled": false,
+        "patience": 5,
+        "metric": "val_loss"
+    },
+    "augmentation": {
+        "use_augmentation": false,
+        "params": {
+            "horizontal_flip": true,
+            "rotation_range": 15,
+            "brightness_adjust": 0.2,
+            "contrast_adjust": 0.2,
+            "scale_range": [
+                0.8,
+                1.2
+            ],
+            "gaussian_noise": 0.05,
+            "random_crop": [
+                256,
+                256
+            ]
+        }
+    },
+    "logging": {
+        "log_level": "INFO",
+        "tensorboard": true,
+        "gradient_monitoring": true
+    },
+    "evaluation": {
+        "use_test_set": true,
+        "batch_size": 16
+    },
+    "class_names": [
+        "Unlabeled",
+        "Unused",
+        "Unused",
+        "Unused",
+        "Static",
+        "Dynamic",
+        "Ground",
+        "Road",
+        "Sidewalk",
+        "Parking",
+        "Rail track",
+        "Building",
+        "Wall",
+        "Fence",
+        "Guard rail",
+        "Bridge",
+        "Tunnel",
+        "Pole",
+        "Pole group",
+        "Traffic light",
+        "Traffic sign",
+        "Vegetation",
+        "Terrain",
+        "Sky",
+        "Person",
+        "Rider",
+        "Car",
+        "Truck",
+        "Bus",
+        "Caravan",
+        "Trailer",
+        "Train",
+        "Motorcycle",
+        "Bicycle"
+    ]
+}

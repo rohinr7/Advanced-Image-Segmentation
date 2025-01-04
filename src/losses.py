@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 
 class DiceLoss(nn.Module):
     def __init__(self, smooth=1.0):
@@ -7,12 +8,22 @@ class DiceLoss(nn.Module):
         self.smooth = smooth
 
     def forward(self, logits, targets):
-        probs = torch.softmax(logits, dim=1)
-        targets_one_hot = torch.nn.functional.one_hot(targets, num_classes=logits.shape[1]).permute(0, 3, 1, 2)
-        intersection = torch.sum(probs * targets_one_hot, dim=(2, 3))
+        # Since softmax is already applied inside the model, no need to apply softmax here
+        probs = logits  # Directly use the model output (already softmaxed)
+        
+        # One-hot encode the targets
+        targets_one_hot = F.one_hot(targets, num_classes=logits.shape[1]).permute(0, 3, 1, 2).float()
+        
+        # Calculate intersection and union
+        intersection = torch.sum(probs * targets_one_hot, dim=(2, 3))  # Sum over height and width
         union = torch.sum(probs, dim=(2, 3)) + torch.sum(targets_one_hot, dim=(2, 3))
+        
+        # Dice score formula
         dice = (2 * intersection + self.smooth) / (union + self.smooth)
+        
+        # Return the average Dice loss
         return 1 - dice.mean()
+
 
 class CombinedLoss(nn.Module):
     def __init__(self, weight=0.5):

@@ -1,0 +1,166 @@
+experiment_name: "experiment1"
+
+paths:
+  data: "/net/ens/am4ip/datasets/project-dataset"
+
+dataset_split:
+  train: 0.10  # Percentage of data for training
+  val: 0.1    # Percentage of data for validation
+  test: 0.1   # Percentage of data for testing
+
+data:
+  shuffle: true      # Shuffle data during loading
+  num_workers: 4     # Number of workers for data loading
+  pin_memory: true   # Enable pin_memory for better performance on GPU
+
+hyperparameters:
+  batch_size: 16
+  learning_rate: 1e-5
+  epochs: 50
+  seed: 42
+  input_channels: 3
+  output_channels: 34
+  mixed_precision: true
+
+model:
+  name: "UNet"  # Options: UNet, DeepLabV3Plus, etc.
+  pretrained: true
+
+
+loss:
+  name: "CrossEntropyLoss"  # Options: CrossEntropyLoss, FocalLoss, etc.
+  params:
+    weight : [
+    0.000004,  # Unlabeled
+    0.000000,  # Unused
+    0.000000,  # Unused
+    0.000000,  # Unused
+    0.000000,  # Static
+    0.000000,  # Dynamic
+    0.000000,  # Ground
+    0.000001,  # Road
+    0.000021,  # Sidewalk
+    0.000000,  # Parking
+    0.000000,  # Rail track
+    0.000002,  # Building
+    0.000054,  # Wall
+    0.000032,  # Fence
+    0.000000,  # Guard rail
+    0.000000,  # Bridge
+    0.000000,  # Tunnel
+    0.000000,  # Pole
+    0.000094,  # Pole group
+    0.000425,  # Traffic light
+    0.000086,  # Traffic sign
+    0.000002,  # Vegetation
+    0.000023,  # Terrain
+    0.000002,  # Sky
+    0.000191,  # Person
+    0.008351,  # Rider
+    0.000007,  # Car
+    0.000250,  # Truck
+    0.000156,  # Bus
+    0.464491,  # Caravan
+    0.497062,  # Trailer
+    0.000164,  # Train
+    0.002916,  # Motorcycle
+    0.025667,   # Bicycle
+  ]
+
+optimizer:
+  name: "Adam"  # Options: Adam, SGD, etc.
+  params:
+    lr: 0.0001
+    weight_decay: 0.0001
+
+scheduler:
+  name: "CosineAnnealingLR"
+  params:
+    T_max: 10
+    eta_min: 0.000001
+
+metrics:
+  iou: true
+  pixel_accuracy: true
+  dice: true
+
+early_stopping:
+  enabled: false
+  patience: 5
+  metric: "val_loss"
+
+
+# hyperparameters:
+#   batch_size: 16
+#   learning_rate: 1e-4
+#   epochs: 5
+#   seed: 42
+#   input_channels: 3
+#   output_channels: 31
+#   mixed_precision: true
+
+
+
+# scheduler:
+#   name: "StepLR"
+#   params:
+#     step_size: 5
+#     gamma: 0.5
+
+
+augmentation:
+  use_augmentation: false
+  params:
+    horizontal_flip: true
+    rotation_range: 15
+    brightness_adjust: 0.2
+    contrast_adjust: 0.2
+    scale_range: [0.8, 1.2]
+    gaussian_noise: 0.05
+    random_crop: [256, 256]
+
+logging:
+  log_level: "INFO"  # Options: DEBUG, INFO, WARNING, ERROR
+  tensorboard: true
+  gradient_monitoring: true
+
+evaluation:
+  use_test_set: true
+  batch_size: 16
+
+
+class_names:
+  - Unlabeled
+  - Unused
+  - Unused
+  - Unused
+  - Static
+  - Dynamic
+  - Ground
+  - Road
+  - Sidewalk
+  - Parking
+  - Rail track
+  - Building
+  - Wall
+  - Fence
+  - Guard rail
+  - Bridge
+  - Tunnel
+  - Pole
+  - Pole group
+  - Traffic light
+  - Traffic sign
+  - Vegetation
+  - Terrain
+  - Sky
+  - Person
+  - Rider
+  - Car
+  - Truck
+  - Bus
+  - Caravan
+  - Trailer
+  - Train
+  - Motorcycle
+  - Bicycle

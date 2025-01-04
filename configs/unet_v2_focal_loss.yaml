@@ -24,7 +24,7 @@ hyperparameters:
 
 model:
   name: "UNetImproved"  # Options: UNet, DeepLabV3Plus, etc.
-  pretrained: false
+  pretrained: True
 
 loss:
   name: "FocalLoss"  # Options: CrossEntropyLoss, FocalLoss, etc.
@@ -48,7 +48,7 @@ metrics:
   dice: true
 
 early_stopping:
-  enabled: true
+  enabled: false
   patience: 5
   metric: "val_loss"
 

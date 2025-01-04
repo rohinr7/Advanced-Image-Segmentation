@@ -1,0 +1,618 @@
+Model: UNetImproved
+Loss Function: CombinedLoss
+Optimizer: Adam
+Learning Rate: 0.0001
+Scheduler: CosineAnnealingLR
+Scheduler Params: {'T_max': 10, 'eta_min': 1e-06}
+Batch Size: 16
+Epochs: 50
+Seed: 42
+Dataset Details:
+Dataset Path: /net/ens/am4ip/datasets/project-dataset
+Train Split: 0.8
+Validation Split: 0.1
+Test Split: 0.1
+Augmentation Details:
+Use Augmentation: False
+
+    Epoch 1:
+      Train Loss: 2.0537, Train Accuracy: 0.5906
+      Val Loss: 1.9641
+      Metrics:
+        val_loss: 1.9641
+        val_accuracy: 0.7308
+        IoU: { Unlabeled: 0.0041, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.8705, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.6301, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.4453, Terrain: 0.0000, Sky: 0.8785, Person: 0.0000, Rider: 0.0000, Car: 0.0159, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanIoU: 0.1486
+        PixelAccuracy: 0.7310
+        DICE: { Unlabeled: 0.0083, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9306, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.7713, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.6145, Terrain: 0.0000, Sky: 0.9351, Person: 0.0000, Rider: 0.0000, Car: 0.0314, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanDICE: 0.1484
+        overAllIOU: 0.5766
+    
+
+    Epoch 2:
+      Train Loss: 1.9171, Train Accuracy: 0.7547
+      Val Loss: 1.8721
+      Metrics:
+        val_loss: 1.8721
+        val_accuracy: 0.7805
+        IoU: { Unlabeled: 0.0000, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.8592, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.7681, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.5658, Terrain: 0.0000, Sky: 0.8660, Person: 0.0000, Rider: 0.0000, Car: 0.0001, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanIoU: 0.1599
+        PixelAccuracy: 0.7812
+        DICE: { Unlabeled: 0.0000, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9241, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.8684, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.7214, Terrain: 0.0000, Sky: 0.9280, Person: 0.0000, Rider: 0.0000, Car: 0.0003, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanDICE: 0.1734
+        overAllIOU: 0.6413
+    
+
+    Epoch 3:
+      Train Loss: 1.8585, Train Accuracy: 0.7831
+      Val Loss: 1.8496
+      Metrics:
+        val_loss: 1.8496
+        val_accuracy: 0.7975
+        IoU: { Unlabeled: 0.0009, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.8654, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.7293, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.6320, Terrain: 0.0000, Sky: 0.9185, Person: 0.0000, Rider: 0.0000, Car: 0.2176, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanIoU: 0.1758
+        PixelAccuracy: 0.7981
+        DICE: { Unlabeled: 0.0017, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9277, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.8430, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.7735, Terrain: 0.0000, Sky: 0.9575, Person: 0.0000, Rider: 0.0000, Car: 0.3509, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanDICE: 0.2014
+        overAllIOU: 0.6644
+    
+
+    Epoch 4:
+      Train Loss: 1.8230, Train Accuracy: 0.8338
+      Val Loss: 1.7891
+      Metrics:
+        val_loss: 1.7891
+        val_accuracy: 0.8550
+        IoU: { Unlabeled: 0.3046, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.8935, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.7860, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.7639, Terrain: 0.0000, Sky: 0.9673, Person: 0.0000, Rider: 0.0000, Car: 0.7495, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanIoU: 0.2333
+        PixelAccuracy: 0.8556
+        DICE: { Unlabeled: 0.4664, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9436, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.8797, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.8657, Terrain: 0.0000, Sky: 0.9834, Person: 0.0000, Rider: 0.0000, Car: 0.8553, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanDICE: 0.2609
+        overAllIOU: 0.7480
+    
+
+    Epoch 5:
+      Train Loss: 1.6580, Train Accuracy: 0.8559
+      Val Loss: 1.5096
+      Metrics:
+        val_loss: 1.5096
+        val_accuracy: 0.8640
+        IoU: { Unlabeled: 0.3515, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.8949, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.7938, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.7867, Terrain: 0.0000, Sky: 0.9706, Person: 0.0000, Rider: 0.0000, Car: 0.8081, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanIoU: 0.2407
+        PixelAccuracy: 0.8646
+        DICE: { Unlabeled: 0.5196, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9443, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.8846, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.8802, Terrain: 0.0000, Sky: 0.9851, Person: 0.0000, Rider: 0.0000, Car: 0.8926, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanDICE: 0.2668
+        overAllIOU: 0.7618
+    
+
+    Epoch 6:
+      Train Loss: 1.4882, Train Accuracy: 0.8654
+      Val Loss: 1.4748
+      Metrics:
+        val_loss: 1.4748
+        val_accuracy: 0.8703
+        IoU: { Unlabeled: 0.3860, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9048, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.8103, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.8150, Terrain: 0.0000, Sky: 0.9729, Person: 0.0000, Rider: 0.0000, Car: 0.8217, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanIoU: 0.2462
+        PixelAccuracy: 0.8708
+        DICE: { Unlabeled: 0.5566, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9498, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.8948, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.8978, Terrain: 0.0000, Sky: 0.9862, Person: 0.0000, Rider: 0.0000, Car: 0.9011, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanDICE: 0.2710
+        overAllIOU: 0.7716
+    
+
+    Epoch 7:
+      Train Loss: 1.4719, Train Accuracy: 0.8712
+      Val Loss: 1.4662
+      Metrics:
+        val_loss: 1.4662
+        val_accuracy: 0.8750
+        IoU: { Unlabeled: 0.4056, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9178, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.8212, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.8230, Terrain: 0.0000, Sky: 0.9749, Person: 0.0000, Rider: 0.0000, Car: 0.8438, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanIoU: 0.2501
+        PixelAccuracy: 0.8755
+        DICE: { Unlabeled: 0.5766, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9570, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.9015, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.9027, Terrain: 0.0000, Sky: 0.9873, Person: 0.0000, Rider: 0.0000, Car: 0.9143, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanDICE: 0.2737
+        overAllIOU: 0.7789
+    
+
+    Epoch 8:
+      Train Loss: 1.4660, Train Accuracy: 0.8750
+      Val Loss: 1.4618
+      Metrics:
+        val_loss: 1.4618
+        val_accuracy: 0.8783
+        IoU: { Unlabeled: 0.4145, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9229, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.8396, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.8276, Terrain: 0.0000, Sky: 0.9757, Person: 0.0000, Rider: 0.0000, Car: 0.8483, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanIoU: 0.2523
+        PixelAccuracy: 0.8789
+        DICE: { Unlabeled: 0.5856, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9598, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.9125, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.9054, Terrain: 0.0000, Sky: 0.9877, Person: 0.0000, Rider: 0.0000, Car: 0.9172, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanDICE: 0.2752
+        overAllIOU: 0.7843
+    
+
+    Epoch 9:
+      Train Loss: 1.4620, Train Accuracy: 0.8785
+      Val Loss: 1.4588
+      Metrics:
+        val_loss: 1.4588
+        val_accuracy: 0.8810
+        IoU: { Unlabeled: 0.4228, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9253, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.8451, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.8350, Terrain: 0.0000, Sky: 0.9767, Person: 0.0000, Rider: 0.0000, Car: 0.8577, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanIoU: 0.2541
+        PixelAccuracy: 0.8815
+        DICE: { Unlabeled: 0.5939, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9611, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.9157, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.9098, Terrain: 0.0000, Sky: 0.9882, Person: 0.0000, Rider: 0.0000, Car: 0.9227, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanDICE: 0.2764
+        overAllIOU: 0.7885
+    
+
+    Epoch 10:
+      Train Loss: 1.4599, Train Accuracy: 0.8801
+      Val Loss: 1.4597
+      Metrics:
+        val_loss: 1.4597
+        val_accuracy: 0.8781
+        IoU: { Unlabeled: 0.4163, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9207, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.8339, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.8385, Terrain: 0.0000, Sky: 0.9762, Person: 0.0000, Rider: 0.0000, Car: 0.8512, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanIoU: 0.2528
+        PixelAccuracy: 0.8787
+        DICE: { Unlabeled: 0.5874, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9586, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.9090, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.9119, Terrain: 0.0000, Sky: 0.9879, Person: 0.0000, Rider: 0.0000, Car: 0.9188, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanDICE: 0.2755
+        overAllIOU: 0.7840
+    
+
+    Epoch 11:
+      Train Loss: 1.4581, Train Accuracy: 0.8817
+      Val Loss: 1.4568
+      Metrics:
+        val_loss: 1.4568
+        val_accuracy: 0.8819
+        IoU: { Unlabeled: 0.4344, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9237, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.8482, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.8395, Terrain: 0.0000, Sky: 0.9766, Person: 0.0000, Rider: 0.0000, Car: 0.8589, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanIoU: 0.2551
+        PixelAccuracy: 0.8824
+        DICE: { Unlabeled: 0.6052, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9602, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.9175, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.9125, Terrain: 0.0000, Sky: 0.9882, Person: 0.0000, Rider: 0.0000, Car: 0.9234, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanDICE: 0.2773
+        overAllIOU: 0.7900
+    
+
+    Epoch 12:
+      Train Loss: 1.4571, Train Accuracy: 0.8824
+      Val Loss: 1.4571
+      Metrics:
+        val_loss: 1.4571
+        val_accuracy: 0.8809
+        IoU: { Unlabeled: 0.4229, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9267, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.8439, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.8430, Terrain: 0.0000, Sky: 0.9713, Person: 0.0000, Rider: 0.0000, Car: 0.8563, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanIoU: 0.2541
+        PixelAccuracy: 0.8813
+        DICE: { Unlabeled: 0.5939, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9618, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.9150, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.9146, Terrain: 0.0000, Sky: 0.9854, Person: 0.0000, Rider: 0.0000, Car: 0.9218, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanDICE: 0.2765
+        overAllIOU: 0.7882
+    
+
+    Epoch 13:
+      Train Loss: 1.4559, Train Accuracy: 0.8837
+      Val Loss: 1.4550
+      Metrics:
+        val_loss: 1.4550
+        val_accuracy: 0.8846
+        IoU: { Unlabeled: 0.4307, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9256, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.8489, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.8504, Terrain: 0.0000, Sky: 0.9784, Person: 0.0000, Rider: 0.0000, Car: 0.8486, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanIoU: 0.2551
+        PixelAccuracy: 0.8851
+        DICE: { Unlabeled: 0.6016, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9612, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.9180, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.9189, Terrain: 0.0000, Sky: 0.9890, Person: 0.0000, Rider: 0.0000, Car: 0.9174, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanDICE: 0.2772
+        overAllIOU: 0.7942
+    
+
+    Epoch 14:
+      Train Loss: 1.4548, Train Accuracy: 0.8849
+      Val Loss: 1.4533
+      Metrics:
+        val_loss: 1.4533
+        val_accuracy: 0.8856
+        IoU: { Unlabeled: 0.4460, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9309, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.8566, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.8484, Terrain: 0.0000, Sky: 0.9789, Person: 0.0000, Rider: 0.0000, Car: 0.8691, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanIoU: 0.2576
+        PixelAccuracy: 0.8861
+        DICE: { Unlabeled: 0.6164, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9641, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.9225, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.9177, Terrain: 0.0000, Sky: 0.9893, Person: 0.0000, Rider: 0.0000, Car: 0.9293, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanDICE: 0.2789
+        overAllIOU: 0.7959
+    
+
+    Epoch 15:
+      Train Loss: 1.4541, Train Accuracy: 0.8856
+      Val Loss: 1.4553
+      Metrics:
+        val_loss: 1.4553
+        val_accuracy: 0.8824
+        IoU: { Unlabeled: 0.4306, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9356, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.8515, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.8352, Terrain: 0.0000, Sky: 0.9778, Person: 0.0000, Rider: 0.0000, Car: 0.8654, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanIoU: 0.2558
+        PixelAccuracy: 0.8829
+        DICE: { Unlabeled: 0.6014, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9666, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.9195, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.9100, Terrain: 0.0000, Sky: 0.9888, Person: 0.0000, Rider: 0.0000, Car: 0.9272, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanDICE: 0.2776
+        overAllIOU: 0.7908
+    
+
+    Epoch 16:
+      Train Loss: 1.4540, Train Accuracy: 0.8855
+      Val Loss: 1.4527
+      Metrics:
+        val_loss: 1.4527
+        val_accuracy: 0.8859
+        IoU: { Unlabeled: 0.4431, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9284, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.8516, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.8533, Terrain: 0.0000, Sky: 0.9783, Person: 0.0000, Rider: 0.0000, Car: 0.8730, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanIoU: 0.2575
+        PixelAccuracy: 0.8864
+        DICE: { Unlabeled: 0.6136, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9627, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.9196, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.9206, Terrain: 0.0000, Sky: 0.9890, Person: 0.0000, Rider: 0.0000, Car: 0.9315, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanDICE: 0.2788
+        overAllIOU: 0.7964
+    
+
+    Epoch 17:
+      Train Loss: 1.4529, Train Accuracy: 0.8868
+      Val Loss: 1.4529
+      Metrics:
+        val_loss: 1.4529
+        val_accuracy: 0.8852
+        IoU: { Unlabeled: 0.4421, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9322, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.8530, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.8533, Terrain: 0.0000, Sky: 0.9790, Person: 0.0000, Rider: 0.0000, Car: 0.8810, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanIoU: 0.2582
+        PixelAccuracy: 0.8857
+        DICE: { Unlabeled: 0.6126, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9648, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.9204, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.9206, Terrain: 0.0000, Sky: 0.9894, Person: 0.0000, Rider: 0.0000, Car: 0.9362, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanDICE: 0.2792
+        overAllIOU: 0.7953
+    
+
+    Epoch 18:
+      Train Loss: 1.4525, Train Accuracy: 0.8873
+      Val Loss: 1.4509
+      Metrics:
+        val_loss: 1.4509
+        val_accuracy: 0.8882
+        IoU: { Unlabeled: 0.4499, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9325, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.8590, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.8555, Terrain: 0.0000, Sky: 0.9792, Person: 0.0000, Rider: 0.0000, Car: 0.8764, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanIoU: 0.2588
+        PixelAccuracy: 0.8888
+        DICE: { Unlabeled: 0.6200, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9649, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.9239, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.9219, Terrain: 0.0000, Sky: 0.9895, Person: 0.0000, Rider: 0.0000, Car: 0.9336, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanDICE: 0.2797
+        overAllIOU: 0.8002
+    
+
+    Epoch 19:
+      Train Loss: 1.4522, Train Accuracy: 0.8877
+      Val Loss: 1.4524
+      Metrics:
+        val_loss: 1.4524
+        val_accuracy: 0.8862
+        IoU: { Unlabeled: 0.4415, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9256, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.8576, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.8542, Terrain: 0.0000, Sky: 0.9790, Person: 0.0000, Rider: 0.0000, Car: 0.8678, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanIoU: 0.2574
+        PixelAccuracy: 0.8867
+        DICE: { Unlabeled: 0.6120, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9612, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.9231, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.9212, Terrain: 0.0000, Sky: 0.9894, Person: 0.0000, Rider: 0.0000, Car: 0.9286, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanDICE: 0.2787
+        overAllIOU: 0.7968
+    
+
+    Epoch 20:
+      Train Loss: 1.4519, Train Accuracy: 0.8880
+      Val Loss: 1.4519
+      Metrics:
+        val_loss: 1.4519
+        val_accuracy: 0.8872
+        IoU: { Unlabeled: 0.4452, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9301, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.8532, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.8557, Terrain: 0.0000, Sky: 0.9793, Person: 0.0000, Rider: 0.0000, Car: 0.8762, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanIoU: 0.2581
+        PixelAccuracy: 0.8878
+        DICE: { Unlabeled: 0.6156, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9637, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.9205, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.9220, Terrain: 0.0000, Sky: 0.9895, Person: 0.0000, Rider: 0.0000, Car: 0.9334, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanDICE: 0.2792
+        overAllIOU: 0.7985
+    
+
+    Epoch 21:
+      Train Loss: 1.4516, Train Accuracy: 0.8883
+      Val Loss: 1.4505
+      Metrics:
+        val_loss: 1.4505
+        val_accuracy: 0.8886
+        IoU: { Unlabeled: 0.4494, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9350, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.8621, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.8560, Terrain: 0.0000, Sky: 0.9799, Person: 0.0000, Rider: 0.0000, Car: 0.8813, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanIoU: 0.2594
+        PixelAccuracy: 0.8891
+        DICE: { Unlabeled: 0.6196, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9663, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.9257, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.9222, Terrain: 0.0000, Sky: 0.9898, Person: 0.0000, Rider: 0.0000, Car: 0.9363, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanDICE: 0.2800
+        overAllIOU: 0.8007
+    
+
+    Epoch 22:
+      Train Loss: 1.4511, Train Accuracy: 0.8890
+      Val Loss: 1.4508
+      Metrics:
+        val_loss: 1.4508
+        val_accuracy: 0.8881
+        IoU: { Unlabeled: 0.4506, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9317, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.8624, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.8667, Terrain: 0.0000, Sky: 0.9798, Person: 0.0000, Rider: 0.0000, Car: 0.8751, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanIoU: 0.2595
+        PixelAccuracy: 0.8886
+        DICE: { Unlabeled: 0.6207, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9645, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.9259, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.9284, Terrain: 0.0000, Sky: 0.9898, Person: 0.0000, Rider: 0.0000, Car: 0.9328, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanDICE: 0.2801
+        overAllIOU: 0.7999
+    
+
+    Epoch 23:
+      Train Loss: 1.4506, Train Accuracy: 0.8898
+      Val Loss: 1.4502
+      Metrics:
+        val_loss: 1.4502
+        val_accuracy: 0.8888
+        IoU: { Unlabeled: 0.4553, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9359, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.8629, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.8563, Terrain: 0.0000, Sky: 0.9788, Person: 0.0000, Rider: 0.0000, Car: 0.8863, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanIoU: 0.2600
+        PixelAccuracy: 0.8893
+        DICE: { Unlabeled: 0.6251, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9668, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.9261, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.9223, Terrain: 0.0000, Sky: 0.9892, Person: 0.0000, Rider: 0.0000, Car: 0.9392, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanDICE: 0.2805
+        overAllIOU: 0.8010
+    
+
+    Epoch 24:
+      Train Loss: 1.4506, Train Accuracy: 0.8898
+      Val Loss: 1.4505
+      Metrics:
+        val_loss: 1.4505
+        val_accuracy: 0.8883
+        IoU: { Unlabeled: 0.4589, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9347, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.8634, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.8530, Terrain: 0.0000, Sky: 0.9790, Person: 0.0000, Rider: 0.0000, Car: 0.8855, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanIoU: 0.2599
+        PixelAccuracy: 0.8888
+        DICE: { Unlabeled: 0.6285, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9661, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.9265, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.9204, Terrain: 0.0000, Sky: 0.9893, Person: 0.0000, Rider: 0.0000, Car: 0.9388, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanDICE: 0.2805
+        overAllIOU: 0.8002
+    
+
+    Epoch 25:
+      Train Loss: 1.4507, Train Accuracy: 0.8895
+      Val Loss: 1.4523
+      Metrics:
+        val_loss: 1.4523
+        val_accuracy: 0.8856
+        IoU: { Unlabeled: 0.4446, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9279, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.8597, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.8528, Terrain: 0.0000, Sky: 0.9769, Person: 0.0000, Rider: 0.0000, Car: 0.8764, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanIoU: 0.2580
+        PixelAccuracy: 0.8861
+        DICE: { Unlabeled: 0.6150, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9624, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.9243, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.9203, Terrain: 0.0000, Sky: 0.9883, Person: 0.0000, Rider: 0.0000, Car: 0.9336, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanDICE: 0.2792
+        overAllIOU: 0.7959
+    
+
+    Epoch 26:
+      Train Loss: 1.4503, Train Accuracy: 0.8900
+      Val Loss: 1.4493
+      Metrics:
+        val_loss: 1.4493
+        val_accuracy: 0.8901
+        IoU: { Unlabeled: 0.4581, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9326, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.8602, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.8663, Terrain: 0.0000, Sky: 0.9800, Person: 0.0000, Rider: 0.0000, Car: 0.8889, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanIoU: 0.2605
+        PixelAccuracy: 0.8907
+        DICE: { Unlabeled: 0.6278, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9650, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.9246, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.9282, Terrain: 0.0000, Sky: 0.9899, Person: 0.0000, Rider: 0.0000, Car: 0.9407, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanDICE: 0.2809
+        overAllIOU: 0.8033
+    
+
+    Epoch 27:
+      Train Loss: 1.4500, Train Accuracy: 0.8905
+      Val Loss: 1.4493
+      Metrics:
+        val_loss: 1.4493
+        val_accuracy: 0.8905
+        IoU: { Unlabeled: 0.4578, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9301, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.8659, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.8749, Terrain: 0.0000, Sky: 0.9794, Person: 0.0000, Rider: 0.0000, Car: 0.8901, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanIoU: 0.2612
+        PixelAccuracy: 0.8910
+        DICE: { Unlabeled: 0.6275, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9636, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.9279, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.9331, Terrain: 0.0000, Sky: 0.9896, Person: 0.0000, Rider: 0.0000, Car: 0.9414, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanDICE: 0.2812
+        overAllIOU: 0.8038
+    
+
+    Epoch 28:
+      Train Loss: 1.4497, Train Accuracy: 0.8909
+      Val Loss: 1.4483
+      Metrics:
+        val_loss: 1.4483
+        val_accuracy: 0.8917
+        IoU: { Unlabeled: 0.4647, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9352, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.8633, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.8697, Terrain: 0.0000, Sky: 0.9807, Person: 0.0000, Rider: 0.0000, Car: 0.8950, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanIoU: 0.2617
+        PixelAccuracy: 0.8922
+        DICE: { Unlabeled: 0.6339, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9664, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.9264, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.9302, Terrain: 0.0000, Sky: 0.9902, Person: 0.0000, Rider: 0.0000, Car: 0.9441, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanDICE: 0.2817
+        overAllIOU: 0.8058
+    
+
+    Epoch 29:
+      Train Loss: 1.4492, Train Accuracy: 0.8915
+      Val Loss: 1.4496
+      Metrics:
+        val_loss: 1.4496
+        val_accuracy: 0.8899
+        IoU: { Unlabeled: 0.4580, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9333, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.8667, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.8693, Terrain: 0.0000, Sky: 0.9800, Person: 0.0000, Rider: 0.0000, Car: 0.8859, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanIoU: 0.2609
+        PixelAccuracy: 0.8904
+        DICE: { Unlabeled: 0.6276, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9654, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.9283, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.9299, Terrain: 0.0000, Sky: 0.9899, Person: 0.0000, Rider: 0.0000, Car: 0.9390, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanDICE: 0.2811
+        overAllIOU: 0.8029
+    
+
+    Epoch 30:
+      Train Loss: 1.4495, Train Accuracy: 0.8911
+      Val Loss: 1.4498
+      Metrics:
+        val_loss: 1.4498
+        val_accuracy: 0.8891
+        IoU: { Unlabeled: 0.4608, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9344, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.8643, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.8614, Terrain: 0.0000, Sky: 0.9797, Person: 0.0000, Rider: 0.0000, Car: 0.8862, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanIoU: 0.2606
+        PixelAccuracy: 0.8896
+        DICE: { Unlabeled: 0.6303, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9660, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.9270, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.9254, Terrain: 0.0000, Sky: 0.9897, Person: 0.0000, Rider: 0.0000, Car: 0.9392, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanDICE: 0.2809
+        overAllIOU: 0.8015
+    
+
+    Epoch 31:
+      Train Loss: 1.4489, Train Accuracy: 0.8920
+      Val Loss: 1.4492
+      Metrics:
+        val_loss: 1.4492
+        val_accuracy: 0.8903
+        IoU: { Unlabeled: 0.4572, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9364, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.8676, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.8599, Terrain: 0.0000, Sky: 0.9804, Person: 0.0000, Rider: 0.0000, Car: 0.8915, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanIoU: 0.2609
+        PixelAccuracy: 0.8909
+        DICE: { Unlabeled: 0.6269, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9671, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.9289, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.9244, Terrain: 0.0000, Sky: 0.9901, Person: 0.0000, Rider: 0.0000, Car: 0.9421, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanDICE: 0.2810
+        overAllIOU: 0.8036
+    
+
+    Epoch 32:
+      Train Loss: 1.4500, Train Accuracy: 0.8904
+      Val Loss: 1.4493
+      Metrics:
+        val_loss: 1.4493
+        val_accuracy: 0.8902
+        IoU: { Unlabeled: 0.4527, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9329, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.8618, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.8666, Terrain: 0.0000, Sky: 0.9800, Person: 0.0000, Rider: 0.0000, Car: 0.8920, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanIoU: 0.2605
+        PixelAccuracy: 0.8907
+        DICE: { Unlabeled: 0.6226, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9652, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.9256, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.9283, Terrain: 0.0000, Sky: 0.9898, Person: 0.0000, Rider: 0.0000, Car: 0.9424, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanDICE: 0.2807
+        overAllIOU: 0.8033
+    
+
+    Epoch 33:
+      Train Loss: 1.4485, Train Accuracy: 0.8925
+      Val Loss: 1.4478
+      Metrics:
+        val_loss: 1.4478
+        val_accuracy: 0.8922
+        IoU: { Unlabeled: 0.4723, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9291, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.8697, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.8703, Terrain: 0.0000, Sky: 0.9809, Person: 0.0000, Rider: 0.0000, Car: 0.8939, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanIoU: 0.2621
+        PixelAccuracy: 0.8928
+        DICE: { Unlabeled: 0.6409, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9631, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.9301, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.9304, Terrain: 0.0000, Sky: 0.9903, Person: 0.0000, Rider: 0.0000, Car: 0.9435, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanDICE: 0.2820
+        overAllIOU: 0.8067
+    
+
+    Epoch 34:
+      Train Loss: 1.4484, Train Accuracy: 0.8927
+      Val Loss: 1.4480
+      Metrics:
+        val_loss: 1.4480
+        val_accuracy: 0.8918
+        IoU: { Unlabeled: 0.4678, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9350, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.8642, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.8696, Terrain: 0.0000, Sky: 0.9810, Person: 0.0000, Rider: 0.0000, Car: 0.8965, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanIoU: 0.2620
+        PixelAccuracy: 0.8923
+        DICE: { Unlabeled: 0.6368, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9663, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.9269, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.9300, Terrain: 0.0000, Sky: 0.9904, Person: 0.0000, Rider: 0.0000, Car: 0.9450, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanDICE: 0.2819
+        overAllIOU: 0.8059
+    
+
+    Epoch 35:
+      Train Loss: 1.4484, Train Accuracy: 0.8927
+      Val Loss: 1.4495
+      Metrics:
+        val_loss: 1.4495
+        val_accuracy: 0.8896
+        IoU: { Unlabeled: 0.4653, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9312, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.8661, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.8593, Terrain: 0.0000, Sky: 0.9803, Person: 0.0000, Rider: 0.0000, Car: 0.8850, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanIoU: 0.2606
+        PixelAccuracy: 0.8902
+        DICE: { Unlabeled: 0.6345, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9643, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.9280, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.9241, Terrain: 0.0000, Sky: 0.9900, Person: 0.0000, Rider: 0.0000, Car: 0.9384, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanDICE: 0.2810
+        overAllIOU: 0.8025
+    
+
+    Epoch 36:
+      Train Loss: 1.4482, Train Accuracy: 0.8929
+      Val Loss: 1.4478
+      Metrics:
+        val_loss: 1.4478
+        val_accuracy: 0.8920
+        IoU: { Unlabeled: 0.4646, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9344, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.8719, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.8743, Terrain: 0.0000, Sky: 0.9807, Person: 0.0000, Rider: 0.0000, Car: 0.8918, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanIoU: 0.2622
+        PixelAccuracy: 0.8926
+        DICE: { Unlabeled: 0.6338, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9660, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.9314, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.9328, Terrain: 0.0000, Sky: 0.9902, Person: 0.0000, Rider: 0.0000, Car: 0.9423, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanDICE: 0.2819
+        overAllIOU: 0.8064
+    
+
+    Epoch 37:
+      Train Loss: 1.4480, Train Accuracy: 0.8932
+      Val Loss: 1.4490
+      Metrics:
+        val_loss: 1.4490
+        val_accuracy: 0.8904
+        IoU: { Unlabeled: 0.4641, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9316, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.8679, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.8628, Terrain: 0.0000, Sky: 0.9799, Person: 0.0000, Rider: 0.0000, Car: 0.8874, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanIoU: 0.2609
+        PixelAccuracy: 0.8909
+        DICE: { Unlabeled: 0.6333, Unused: 0.0000, Unused: 0.0000, Unused: 0.0000, Static: 0.0000, Dynamic: 0.0000, Ground: 0.0000, Road: 0.9645, Sidewalk: 0.0000, Parking: 0.0000, Rail track: 0.0000, Building: 0.9291, Wall: 0.0000, Fence: 0.0000, Guard rail: 0.0000, Bridge: 0.0000, Tunnel: 0.0000, Pole: 0.0000, Pole group: 0.0000, Traffic light: 0.0000, Traffic sign: 0.0000, Vegetation: 0.9262, Terrain: 0.0000, Sky: 0.9898, Person: 0.0000, Rider: 0.0000, Car: 0.9398, Truck: 0.0000, Bus: 0.0000, Caravan: 0.0000, Trailer: 0.0000, Train: 0.0000, Motorcycle: 0.0000, Bicycle: 0.0000 }
+        MeanDICE: 0.2812
+        overAllIOU: 0.8037
+    
+Training started at: 2025-01-03 11:25:03.342002
+Training ended at: 2025-01-03 14:19:37.175495
+Training duration: 2:54:33.833493
+Results on Test Data Set :
+  IoU:
+    0 (Unlabeled): 0.46519631147384644
+    1 (Unused): 0.000000
+    2 (Unused): 0.000000
+    3 (Unused): 0.000000
+    4 (Static): 0.000000
+    5 (Dynamic): 0.000000
+    6 (Ground): 0.000000
+    7 (Road): 0.9301819205284119
+    8 (Sidewalk): 0.0
+    9 (Parking): 0.000000
+    10 (Rail track): 0.000000
+    11 (Building): 0.8707525134086609
+    12 (Wall): 0.0
+    13 (Fence): 0.0
+    14 (Guard rail): 0.000000
+    15 (Bridge): 0.000000
+    16 (Tunnel): 0.000000
+    17 (Pole): 0.000000
+    18 (Pole group): 0.0
+    19 (Traffic light): 0.0
+    20 (Traffic sign): 0.0
+    21 (Vegetation): 0.8721151351928711
+    22 (Terrain): 0.0
+    23 (Sky): 0.9814918041229248
+    24 (Person): 0.0
+    25 (Rider): 0.0
+    26 (Car): 0.8941463828086853
+    27 (Truck): 0.0
+    28 (Bus): 0.0
+    29 (Caravan): 0.0
+    30 (Trailer): 0.0
+    31 (Train): 0.0
+    32 (Motorcycle): 0.0
+    33 (Bicycle): 0.0
+  MeanIoU: 0.2609398365020752
+  IoUoverall: 0.8042141795158386
+  PixelAccuracy: 0.891285
+  DICE:
+    0 (Unlabeled): 0.6344708800315857
+    1 (Unused): 0.000000
+    2 (Unused): 0.000000
+    3 (Unused): 0.000000
+    4 (Static): 0.000000
+    5 (Dynamic): 0.000000
+    6 (Ground): 0.000000
+    7 (Road): 0.963755190372467
+    8 (Sidewalk): 0.0
+    9 (Parking): 0.000000
+    10 (Rail track): 0.000000
+    11 (Building): 0.9307194352149963
+    12 (Wall): 0.0
+    13 (Fence): 0.0
+    14 (Guard rail): 0.000000
+    15 (Bridge): 0.000000
+    16 (Tunnel): 0.000000
+    17 (Pole): 0.000000
+    18 (Pole group): 0.0
+    19 (Traffic light): 0.0
+    20 (Traffic sign): 0.0
+    21 (Vegetation): 0.9314406514167786
+    22 (Terrain): 0.0
+    23 (Sky): 0.9906537532806396
+    24 (Person): 0.0
+    25 (Rider): 0.0
+    26 (Car): 0.9438444375991821
+    27 (Truck): 0.0
+    28 (Bus): 0.0
+    29 (Caravan): 0.0
+    30 (Trailer): 0.0
+    31 (Train): 0.0
+    32 (Motorcycle): 0.0
+    33 (Bicycle): 0.0
+  MeanDICE: 0.280756
+  val_loss: 1.448445
+  val_accuracy: 0.891301
+
+Testing started at: 2025-01-03 14:19:37.180982
+Testing ended at: 2025-01-03 14:19:59.177931
+Testing duration: 0:00:21.996949

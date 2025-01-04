@@ -1,6 +1,8 @@
 import numpy as np
 from src.metrics import compute_iou, compute_pixel_accuracy, compute_dice_coefficient
+import torch 
 import time
+import segmentation_models_pytorch as smp
 
 class Evaluator:
     """
@@ -29,10 +31,26 @@ class Evaluator:
         """
         results = {}
         if metrics_config.get("iou", True):
-            results["IoU"], results["MeanIoU"] = compute_iou(predictions, targets, self.num_classes)
+            predictions_tensor = torch.tensor(predictions, dtype=torch.long)
+            targets_tensor = torch.tensor(targets, dtype=torch.long)
+
+            # Get stats (TP, FP, FN, TN)
+            TP, FP, FN, TN = smp.metrics.get_stats(
+                output=predictions_tensor,
+                target=targets_tensor,
+                mode="multiclass",
+                ignore_index=-1,  # If needed, ignore certain index (e.g., background)
+                num_classes=self.num_classes
+            )
+            
+            # Compute IoU using the stats
+            iou = smp.metrics.iou_score(TP, FP, FN, TN, reduction="micro")
+            results["IoUoverall"] = iou
+            results["IoU"], results["MeanIoU"] = compute_iou_for_target_classes_only(predictions, targets, self.num_classes)
         if metrics_config.get("pixel_accuracy", True):
             results["PixelAccuracy"] = compute_pixel_accuracy(predictions, targets)
         if metrics_config.get("dice", True):
             results["DICE"], results["MeanDICE"] = compute_dice_coefficient(predictions, targets, self.num_classes)
+
         return results
 
