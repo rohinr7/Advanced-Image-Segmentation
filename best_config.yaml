@@ -1,4 +1,4 @@
-experiment_name: "experiment1"
+experiment_name: "Deaug_unet"
 
 paths:
   data: "/net/ens/am4ip/datasets/project-dataset"
@@ -16,7 +16,7 @@ data:
 hyperparameters:
   batch_size: 16
   learning_rate: 1e-5
-  epochs: 50
+  epochs: 60
   seed: 42
   input_channels: 3
   output_channels: 34
@@ -26,9 +26,46 @@ model:
   name: "UNet"  # Options: UNet, DeepLabV3Plus, etc.
   pretrained: true
 
+
 loss:
   name: "CrossEntropyLoss"  # Options: CrossEntropyLoss, FocalLoss, etc.
-  params: {}  # Additional parameters for the loss function
+  params:
+    weight : [
+    0.001,    # Unlabeled
+    0.0001,   # Unused
+    0.0001,   # Unused
+    0.0001,   # Unused
+    0.0005,   # Static
+    0.0005,   # Dynamic
+    0.0005,   # Ground
+    0.001,    # Road
+    0.01,     # Sidewalk (more important)
+    0.0001,   # Parking
+    0.0001,   # Rail track
+    0.001,    # Building
+    0.005,    # Wall
+    0.002,    # Fence
+    0.0001,   # Guard rail
+    0.0001,   # Bridge
+    0.0001,   # Tunnel
+    0.0001,   # Pole
+    0.005,    # Pole group
+    0.02,     # Traffic light (important)
+    0.02,     # Traffic sign (important)
+    0.002,    # Vegetation
+    0.005,    # Terrain
+    0.01,     # Sky (more frequent, but needs balance)
+    0.1,      # Person (increased importance)
+    0.05,     # Rider (increased importance)
+    0.01,     # Car
+    0.01,     # Truck
+    0.05,     # Bus (important)
+    0.1,      # Caravan (high for rare class)
+    0.1,      # Trailer (high for rare class)
+    0.01,     # Train
+    0.02,     # Motorcycle
+    0.05      # Bicycle 
+]
 
 optimizer:
   name: "Adam"  # Options: Adam, SGD, etc.
