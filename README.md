@@ -21,11 +21,8 @@
 
   <h2>Project Structure</h2>
   <pre>
-  ├── data/
-  │   ├── raw/               # Raw images from the dataset
-  │   ├── processed/         # Train, validation, and test splits
+  ├── configs/           # Configuration files for experiments
   ├── experiments/
-  │   ├── configs/           # Configuration files for experiments
   │   ├── experiment1/       # Example experiment folder
   │   │   ├── logs/          # TensorBoard logs for training
   │   │   ├── checkpoints/   # Saved model checkpoints
