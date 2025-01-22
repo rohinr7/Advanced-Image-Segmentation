@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 class UNet(nn.Module):
-    def __init__(self, in_channels=3, out_channels=1):
+    def __init__(self, in_channels=3, out_channels=34):
         super(UNet, self).__init__()
 
         # Contracting path
@@ -72,4 +72,4 @@ class UNet(nn.Module):
         dec1 = dec1[:, :, :h, :w]  # Crop back to original height and width
 
         # Output
-        return torch.sigmoid(self.out_conv(dec1))
+        return F.softmax(self.out_conv(dec1), dim=1)#torch.sigmoid(self.out_conv(dec1))

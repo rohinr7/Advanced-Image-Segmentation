@@ -3,7 +3,7 @@ import sys
 
 def main():
     # Define the valid options you want to allow
-    valid_options = [1, 2 , 3]  # Adding more valid options
+    valid_options = [1, 2 , 3,4,5,6]  # Adding more valid options
 
     if len(sys.argv) != 2:
         print("Usage: python3 execute_cremi.py <number>")
@@ -19,19 +19,31 @@ def main():
         print("Invalid input. Please enter a valid number.")
         sys.exit(1)
 
+
     # Define the execution orders based on the number input
     execution_order = {
         1: [  
-            f"python train.py --config configs/config_CombinedLoss.yaml",
-            f"python train.py --config configs/config_dice_loss.yaml ",
+            f"python train.py --config configs/unet_dice_loss.yaml",
+            f"python train.py --config configs/unet_cross_best_lr_4.yaml"
         ],
         2: [
-            f"python train.py --config configs/config_focal_loss.yaml",
-            f"python train.py --config configs/config_TverskyLoss.yaml ",
+            f"python train.py --config configs/deeplab_cross.yaml",
+            f"python train.py --config configs/deeplab_focal.yaml",
         ],
         3: [
-            f"python train.py --config configs/config.yaml ",
-        ]
+            f"python train.py --config configs/unet_cross_best_v2.yaml",
+            f"python train.py --config configs/unet_cross_best_v3.yaml",
+            f"python train.py --config configs/unet_cross_best_aug.yaml",
+            
+        ],
+        4: [
+            f"python train.py --config configs/unet_focal_loss_v1.yaml",
+            f"python train.py --config configs/unet_iou.yaml",
+        ],
+        5: [
+            f"python train.py --config configs/unet_focal_loss.yaml",
+            f"python train.py --config configs/unet_focal_loss_weight.yaml",
+        ],
     }
 
     # Get the list of commands for the selected option

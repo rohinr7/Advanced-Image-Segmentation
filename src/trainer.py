@@ -14,20 +14,23 @@ def setup_logging(log_level="INFO"):
     logging.basicConfig(level=log_level, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
+
 class Trainer:
-    def __init__(self, model, loss_fn, optimizer, scheduler=None, device=None, experiment_name=None, logging_config=None, early_stopping_config=None, metrics_config=None, class_to_color=None,class_names=None):
+    def __init__(self, model, loss_fn, optimizer,hyperparameters=None, scheduler=None, device=None, experiment_name=None, logging_config=None, early_stopping_config=None, metrics_config=None, num_classes=None,class_names=None):
         setup_logging(log_level=logging_config.get("log_level", "INFO"))
         self.tensorboard_enabled = logging_config.get("tensorboard", True)
 
-        self.model = model.to(device or "cpu")
+        self.model = model.to(device)
         self.loss_fn = loss_fn
         self.optimizer = optimizer
         self.scheduler = scheduler
-        self.device = device or "cpu"
-        self.writer = SummaryWriter() if self.tensorboard_enabled else None
-
+        self.device = device
+        timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")  # Get the current timestamp
+        self.experiment_dir = os.path.join("experiments", f"{experiment_name}_{timestamp}" if experiment_name else f"experiment_{timestamp}")
+        self.writer = SummaryWriter(log_dir=self.experiment_dir) if self.tensorboard_enabled else None
+        self.hyperparameters = hyperparameters
         self.metrics_config = metrics_config
-        self.class_to_color = class_to_color
+        self.num_classes = num_classes
         if class_names is None:
             raise ValueError("class_names must be provided in the Trainer constructor.")
         self.class_names = class_names
@@ -44,12 +47,36 @@ class Trainer:
         self.early_stop = False
 
         timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-        self.experiment_dir = os.path.join("experiments", experiment_name or f"experiment_{timestamp}")
+        
         os.makedirs(self.experiment_dir, exist_ok=True)
         os.makedirs(os.path.join(self.experiment_dir, "checkpoints"), exist_ok=True)
         os.makedirs(os.path.join(self.experiment_dir, "logs"), exist_ok=True)
         os.makedirs(os.path.join(self.experiment_dir, "results"), exist_ok=True)
 
+    def log_model_info(self):
+        print(f"Optimizer: {self.optimizer}")
+        """Log model information (e.g., model name, loss function, optimizer) to TensorBoard."""
+        model_info = f"Model: {self.model.__class__.__name__}\n"
+        model_info += f"Loss Function: {self.loss_fn.__class__.__name__}\n"
+        # model_info += f"Optimizer: {self.optimizer.__class__.__name__}\n"
+        
+        # If a scheduler exists, log its name, otherwise, mention "None"
+        if self.scheduler:
+            model_info += f"Scheduler: {self.scheduler.__class__.__name__}\n"
+        else:
+            model_info += "Scheduler: None\n"
+
+        # Log model info as text in TensorBoard
+        self.writer.add_text("Model Information", model_info)
+
+        # Add optimizer name to the hyperparameters dictionary
+        hyperparameters_with_optimizer = {**self.hyperparameters, "optimizer_name": self.optimizer.__class__.__name__}
+
+        # Log hyperparameters including optimizer name using add_hparams
+        self.writer.add_hparams(
+            hyperparameters_with_optimizer, 
+            {"hparam/metric": 0.0}  # You can replace this with the actual metric if needed
+        )
     def compute_gradient_norm(self):
         """
         Compute the gradient norm for the model parameters.
@@ -100,23 +127,32 @@ class Trainer:
     
     def fit(self, train_loader, val_loader, epochs, start_epoch=0):
         """Train the model."""
-        evaluator = Evaluator(self.model, self.device,self.loss_fn ,self.class_to_color, self.metrics_config)
-         # Get class names from config
-        
+        evaluator = Evaluator(self.model, self.device, self.loss_fn, self.num_classes, self.metrics_config)
 
+        # Track the best model state
+        best_model_state = None
+        best_metric = float("inf") if self.metric == "val_loss" else float("-inf")
+        best_epoch = 0
+        
+        count_24=0
+        count_class_24=0
         for epoch in range(start_epoch + 1, epochs + 1):
             print(f"Epoch {epoch}/{epochs}")
-            epoch_loss, total_correct, total_pixels, total_grad_norm = 0.0, 0, 0,0.0
+            epoch_loss, total_correct, total_pixels, total_grad_norm = 0.0, 0, 0, 0.0
 
             self.model.train()
             for batch_idx, (inputs, targets, _, _) in enumerate(train_loader):
                 inputs, targets = inputs.to(self.device), targets.to(self.device)
-
+                unique_vals = torch.unique(inputs)
+                count_24 += (targets == 24).sum().item()
+                
                 outputs = self.model(inputs)
+                
                 loss = self.loss_fn(outputs, targets)
 
                 self.optimizer.zero_grad()
                 loss.backward()
+
                 # Compute gradient norm
                 grad_norm = self.compute_gradient_norm()
                 total_grad_norm += grad_norm
@@ -124,27 +160,58 @@ class Trainer:
                 self.optimizer.step()
 
                 epoch_loss += loss.item()
-
                 predictions = torch.argmax(outputs, dim=1)
+                predictions = torch.argmax(outputs, dim=1)  # Shape: [batch_size, height, width]
+
+                # Count how many pixels are predicted as class 24
+                count_class_24 += (predictions == 24).sum().item()
+
+                
                 total_correct += (predictions == targets).sum().item()
                 total_pixels += targets.numel()
 
-                if self.scheduler:
-                    self.scheduler.step()
-
-                if (batch_idx + 1) % 10 == 0:
-                    print(f"[Batch {batch_idx + 1}/{len(train_loader)}] Loss: {loss.item():.4f}")
-
+            print("Number of pixels targets predicted as class 24(person) :",count_24)
+            print(f"Number of pixels predicted as class 24(person): {count_class_24}")
+            count_24=0
+            count_class_24=0
             avg_epoch_loss = epoch_loss / len(train_loader)
             train_accuracy = total_correct / total_pixels
             avg_grad_norm = total_grad_norm / len(train_loader)
-            # Log metrics
 
             print(f"Train Loss: {avg_epoch_loss:.4f}, Train Accuracy: {train_accuracy:.4f}")
             print(f"Grad Norm = {avg_grad_norm:.4f}")
-            val_metrics,val_loss =evaluator.evaluate(val_loader) #self.validate(val_loader, evaluator)
+
+            # Validate the model
+            val_metrics, val_loss = evaluator.evaluate(val_loader)
             print(f"Validation Loss: {val_loss:.4f}, Metrics: {val_metrics}")
 
+            # Save the last checkpoint
+            save_checkpoint(self.model, self.optimizer, epoch, self.experiment_dir, is_best=False)
+
+            # Check if this is the best model
+            current_metric = val_loss if self.metric == "val_loss" else val_metrics[self.metric]
+            if (self.metric == "val_loss" and current_metric < best_metric) or \
+            (self.metric != "val_loss" and current_metric > best_metric):
+                best_metric = current_metric
+                best_model_state = {
+                    "epoch": epoch,
+                    "model_state_dict": self.model.state_dict(),
+                    "optimizer_state_dict": self.optimizer.state_dict(),
+                }
+                best_epoch = epoch
+
+            # Early stopping logic
+            if self.early_stopping_enabled:
+                if current_metric == best_metric:
+                    self.epochs_no_improve = 0
+                else:
+                    self.epochs_no_improve += 1
+
+                if self.epochs_no_improve >= self.patience:
+                    print("Early stopping triggered!")
+                    break
+
+            # Log metrics
             log_metrics(
                 epoch=epoch,
                 train_loss=avg_epoch_loss,
@@ -156,7 +223,6 @@ class Trainer:
             )
 
             if self.tensorboard_enabled:
-                
                 # Log Training Loss and Accuracy
                 self.writer.add_scalar("Loss/Training", avg_epoch_loss, epoch)
                 self.writer.add_scalar("Accuracy/Training", train_accuracy, epoch)
@@ -165,47 +231,41 @@ class Trainer:
                 self.writer.add_scalar("Loss/Validation", val_loss, epoch)
                 self.writer.add_scalar("Accuracy/Validation", val_metrics.get("val_accuracy", 0.0), epoch)
 
-                #self.writer.add_scalars('Accuracy',{'train': train_accuracy, 'val': val_metrics.get("val_accuracy", 0.0)},epoch)
-                #self.writer.add_scalars('Loss',{'train': avg_epoch_loss, 'val': val_loss}, epoch)
                 self.writer.add_scalar("Gradients/Norm", avg_grad_norm, epoch)
                 self.log_learning_rate(epoch)
+
                 if epoch % 5 == 0:  # Log every 5 epochs
                     self.log_confidence_histogram(outputs, epoch)
                 self.log_class_distribution(predictions, epoch)
 
-                
-                
                 # Log MeanIoU and MeanDICE
                 if "MeanIoU" in val_metrics:
                     self.writer.add_scalar("Metrics/Validation/MeanIoU", val_metrics["MeanIoU"], epoch)
                 if "MeanDICE" in val_metrics:
                     self.writer.add_scalar("Metrics/Validation/MeanDICE", val_metrics["MeanDICE"], epoch)
-                
+                if "IoUoverall" in val_metrics:
+                    self.writer.add_scalar("Metrics/Validation/IoUoverall", val_metrics["IoUoverall"], epoch)
+                print("Saving in tensorboard")
                 # Log Per-Class IoU and DICE Scores
                 if "IoU" in val_metrics:
-                    for class_idx, iou_value in enumerate(val_metrics["IoU"]):
-                        class_name = self.class_names[class_idx]  # Ensure class_names is passed correctly
-                        self.writer.add_scalar(f"Metrics/Validation/IoU/{class_name}", iou_value, epoch)
-
-                if "DICE" in val_metrics:
-                    for class_idx, dice_value in enumerate(val_metrics["DICE"]):
+                    for class_idx, iou_value in val_metrics["IoU"].items():
                         class_name = self.class_names[class_idx]
+                        if class_name == "Unused":  # Skip logging for ignored classes
+                            continue
+                        self.writer.add_scalar(f"Metrics/Validation/IoU/{class_name}", iou_value, epoch)
+                if "DICE" in val_metrics:
+                    for class_idx, dice_value in val_metrics["DICE"].items():
+                        class_name = self.class_names[class_idx]
+                        if class_name == "Unused":  # Skip logging for ignored classes
+                            continue
                         self.writer.add_scalar(f"Metrics/Validation/DICE/{class_name}", dice_value, epoch)
-
-
-
-
-            if self.early_stopping_enabled:
-                if val_metrics[self.metric] < self.best_metric:
-                    self.best_metric = val_metrics[self.metric]
-                    self.epochs_no_improve = 0
-                    save_checkpoint(self.model, self.optimizer, epoch, self.experiment_dir, is_best=True)
-                else:
-                    self.epochs_no_improve += 1
-
-                if self.epochs_no_improve >= self.patience:
-                    print("Early stopping triggered!")
-                    break
+        # if self.tensorboard_enabled:
+        #     self.log_model_info()
+        # Save the best model at the end of training
+        if best_model_state is not None:
+            best_checkpoint_path = os.path.join(self.experiment_dir, "checkpoints", "best_checkpoint.pth")
+            torch.save(best_model_state, best_checkpoint_path)
+            print(f"Best model saved at epoch {best_epoch} with {self.metric}: {best_metric:.4f}")
 
 
     def validate(self, val_loader, evaluator):

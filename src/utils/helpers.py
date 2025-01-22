@@ -5,61 +5,6 @@ import torch
 import numpy as np
 import matplotlib.pyplot as plt
 
-# Reverse the color_to_class mapping to get class_to_color mapping
-color_to_class = {
-    (0, 0, 0): 0,            # Unlabeled
-    (111, 74, 0): 1,         # Dynamic
-    (81, 0, 81): 2,          # Ground
-    (128, 64, 128): 3,       # Road
-    (244, 35, 232): 4,       # Sidewalk
-    (250, 170, 160): 5,      # Parking
-    (230, 150, 140): 6,      # Rail track
-    (70, 70, 70): 7,         # Building
-    (102, 102, 156): 8,      # Wall
-    (190, 153, 153): 9,      # Fence
-    (180, 165, 180): 10,     # Guard rail
-    (150, 100, 100): 11,     # Bridge
-    (150, 120, 90): 12,      # Tunnel
-    (153, 153, 153): 13,     # Pole
-    (250, 170, 30): 14,      # Traffic light
-    (220, 220, 0): 15,       # Traffic sign
-    (107, 142, 35): 16,      # Vegetation
-    (152, 251, 152): 17,     # Terrain
-    (70, 130, 180): 18,      # Sky
-    (220, 20, 60): 19,       # Person
-    (255, 0, 0): 20,         # Rider
-    (0, 0, 142): 21,         # Car
-    (0, 0, 70): 22,          # Truck
-    (0, 60, 100): 23,        # Bus
-    (0, 0, 90): 24,          # Caravan
-    (0, 0, 110): 25,         # Trailer
-    (0, 80, 100): 26,        # Train
-    (0, 0, 230): 27,         # Motorcycle
-    (119, 11, 32): 29        # Bicycle
-}
-
-class_to_color = {v: k for k, v in color_to_class.items()}
-
-def map_classes_to_colors(predictions, class_to_color):
-    """
-    Map class IDs to RGB colors for a segmentation map.
-
-    Args:
-        predictions (torch.Tensor): Tensor of shape (H, W) containing class IDs.
-        class_to_color (dict): Mapping from class IDs to RGB colors.
-
-    Returns:
-        np.ndarray: RGB image of shape (H, W, 3).
-    """
-    height, width = predictions.shape
-    rgb_image = np.zeros((height, width, 3), dtype=np.uint8)
-    
-    for class_id, color in class_to_color.items():
-        rgb_image[predictions == class_id] = color  # Map each class to its color
-    
-    return rgb_image
-
-
 
 def save_checkpoint(model, optimizer, epoch, experiment_dir, is_best=False):
     """
@@ -72,25 +17,25 @@ def save_checkpoint(model, optimizer, epoch, experiment_dir, is_best=False):
         experiment_dir (str): Directory to save checkpoints.
         is_best (bool): If True, save as the best checkpoint.
     """
-    # Save the latest checkpoint (overwrites previous last checkpoint)
-    last_checkpoint_path = os.path.join(experiment_dir, "last_checkpoint.pth")
+    # Save the latest checkpoint (overwrites previous)
+    last_checkpoint_path = os.path.join(experiment_dir, "checkpoints", "last_checkpoint.pth")
     torch.save({
         "epoch": epoch,
         "model_state_dict": model.state_dict(),
         "optimizer_state_dict": optimizer.state_dict(),
     }, last_checkpoint_path)
-    print(f"Saved last checkpoint to {last_checkpoint_path}")
+    print(f"Checkpoint saved at: {last_checkpoint_path}")
 
-    # Save the best checkpoint if required
+    # Save the best checkpoint
     if is_best:
-        best_path = os.path.join(experiment_dir, "best_checkpoint.pth")
+        best_checkpoint_path = os.path.join(experiment_dir, "checkpoints", "best_checkpoint.pth")
         torch.save({
             "epoch": epoch,
             "model_state_dict": model.state_dict(),
             "optimizer_state_dict": optimizer.state_dict(),
-        }, best_path)
-        print(f"Saved best checkpoint to {best_path}")
-        
+        }, best_checkpoint_path)
+        print(f"Best checkpoint saved at: {best_checkpoint_path}")
+
 
 def load_checkpoint(filepath, model, optimizer=None):
     """
@@ -127,9 +72,36 @@ def custom_collate_fn(batch):
 
     return images, masks, sources
 
+def convert_tensor_to_list(obj):
+    """
+    Recursively converts tensors to lists, which are JSON serializable.
+    """
+    if isinstance(obj, torch.Tensor):
+        return obj.tolist()  # Convert tensor to list
+    elif isinstance(obj, dict):
+        return {key: convert_tensor_to_list(value) for key, value in obj.items()}
+    elif isinstance(obj, list):
+        return [convert_tensor_to_list(item) for item in obj]
+    else:
+        return obj
+
 def save_config(config, experiment_dir):
     """Save experiment configuration to a JSON file."""
     config_path = os.path.join(experiment_dir, "config.json")
+    
+    # Convert tensors in config to lists
+    def convert_tensor_to_list(obj):
+        if isinstance(obj, torch.Tensor):
+            return obj.tolist()
+        elif isinstance(obj, dict):
+            return {k: convert_tensor_to_list(v) for k, v in obj.items()}
+        elif isinstance(obj, list):
+            return [convert_tensor_to_list(x) for x in obj]
+        else:
+            return obj
+    
+    config = convert_tensor_to_list(config)
+    
     with open(config_path, "w") as f:
         json.dump(config, f, indent=4)
 
@@ -169,6 +141,7 @@ def log_metrics(epoch, train_loss, val_loss, train_accuracy, val_metrics, experi
         PixelAccuracy: {val_metrics['PixelAccuracy']:.4f}
         DICE: {{ {formatted_dice} }}
         MeanDICE: {val_metrics['MeanDICE']:.4f}
+        overAllIOU: {val_metrics['IoUoverall']:.4f}
     """
 
     # Write to log file
@@ -180,31 +153,31 @@ def log_metrics(epoch, train_loss, val_loss, train_accuracy, val_metrics, experi
 
 
 
-def save_checkpoint(model, optimizer, epoch, experiment_dir, is_best=False):
-    """
-    Saves a checkpoint of the model and optimizer state.
+# def save_checkpoint(model, optimizer, epoch, experiment_dir, is_best=False):
+#     """
+#     Saves a checkpoint of the model and optimizer state.
 
-    Args:
-        model (torch.nn.Module): The model to save.
-        optimizer (torch.optim.Optimizer): The optimizer to save.
-        epoch (int): The current epoch.
-        experiment_dir (str): The experiment directory where the checkpoint will be saved.
-        is_best (bool): If True, saves the checkpoint as 'best_model.pth'.
-    """
-    checkpoint = {
-        'epoch': epoch,
-        'model_state_dict': model.state_dict(),
-        'optimizer_state_dict': optimizer.state_dict(),
-    }
-    checkpoint_path = os.path.join(experiment_dir, "checkpoints", f"checkpoint_epoch_{epoch}.pth")
-    torch.save(checkpoint, checkpoint_path)
-    print(f"Checkpoint saved at: {checkpoint_path}")
+#     Args:
+#         model (torch.nn.Module): The model to save.
+#         optimizer (torch.optim.Optimizer): The optimizer to save.
+#         epoch (int): The current epoch.
+#         experiment_dir (str): The experiment directory where the checkpoint will be saved.
+#         is_best (bool): If True, saves the checkpoint as 'best_model.pth'.
+#     """
+#     checkpoint = {
+#         'epoch': epoch,
+#         'model_state_dict': model.state_dict(),
+#         'optimizer_state_dict': optimizer.state_dict(),
+#     }
+#     checkpoint_path = os.path.join(experiment_dir, "checkpoints", f"checkpoint_epoch_{epoch}.pth")
+#     torch.save(checkpoint, checkpoint_path)
+#     print(f"Checkpoint saved at: {checkpoint_path}")
 
-    # Save as best model if is_best is True
-    if is_best:
-        best_model_path = os.path.join(experiment_dir, "checkpoints", "best_model.pth")
-        torch.save(checkpoint, best_model_path)
-        print(f"Best model saved at: {best_model_path}")
+#     # Save as best model if is_best is True
+#     if is_best:
+#         best_model_path = os.path.join(experiment_dir, "checkpoints", "best_model.pth")
+#         torch.save(checkpoint, best_model_path)
+#         print(f"Best model saved at: {best_model_path}")
 
 
 def save_predictions(inputs, targets, predictions, epoch, experiment_dir):

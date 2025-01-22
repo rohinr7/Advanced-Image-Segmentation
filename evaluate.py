@@ -5,6 +5,7 @@ from src.utils.model_utils import get_model,get_loss_function
 from src.utils.transform_utils import get_transforms
 from src.utils.helpers import load_config
 from src.evaluator import Evaluator
+from src.utils.mapping import CLASS_TO_COLOR
 
 def evaluate(config, model_path):
     """
@@ -35,7 +36,7 @@ def evaluate(config, model_path):
 
     test_loader = DataLoader(test_dataset, batch_size=config["evaluation"]["batch_size"], shuffle=False)
     print(f"Test loader created with batch size: {config['evaluation']['batch_size']}")
-
+    num_classes=config["hyperparameters"]["output_channels"]
     # Model initialization
     model = get_model(config)
     print("Loaded model state from:", model_path)
@@ -45,7 +46,7 @@ def evaluate(config, model_path):
 
     # Evaluator
     print("Initializing evaluator...")
-    evaluator = Evaluator(model=model, device=device,loss_fn=get_loss_function(config), class_to_color=config["class_to_color"], metrics_config=config["metrics"])
+    evaluator = Evaluator(model=model, device=device,loss_fn=get_loss_function(config,device), num_classes=num_classes, metrics_config=config["metrics"])
     metrics,_ = evaluator.evaluate(test_loader)
     print(f"Evaluation Metrics: {metrics}")
 
