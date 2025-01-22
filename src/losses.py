@@ -1,5 +1,7 @@
 import torch
+from torchvision import models
 import torch.nn as nn
+import torch.nn.functional as F
 import torch.nn.functional as F
 
 class DiceLoss(nn.Module):
@@ -176,3 +178,26 @@ class MeanIoULoss(nn.Module):
 
         # Loss is 1 - mean IoU
         return 1 - mean_iou
+
+
+class DenoiceLosses:
+    def __init__(self, vgg_model, lambda_adv=1.0, lambda_perc=1.0):
+        self.vgg = vgg_model
+        self.lambda_adv = lambda_adv
+        self.lambda_perc = lambda_perc
+        self.mse_loss = nn.MSELoss()
+
+    def perceptual_loss(self, pred, target):
+        pred_features = self.vgg(pred)
+        target_features = self.vgg(target)
+        return sum(F.l1_loss(p, t) for p, t in zip(pred_features, target_features))
+
+    def total_loss(self, pred, target, gen_output=None, real_output=None):
+        adv_loss = 0.0
+        if gen_output is not None:
+            adv_loss = self.mse_loss(gen_output, torch.ones_like(gen_output))
+
+        perc_loss = self.perceptual_loss(pred, target)
+        pix_loss = F.l1_loss(pred, target)
+
+        return pix_loss + self.lambda_adv * adv_loss + self.lambda_perc * perc_loss, adv_loss, perc_loss, pix_loss

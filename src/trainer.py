@@ -6,6 +6,9 @@ import numpy as np
 import os
 from datetime import datetime
 import logging
+import datetime
+from tqdm import tqdm 
+import matplotlib.pyplot as plt
 
 def setup_logging(log_level="INFO"):
     logging.basicConfig(level=log_level, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -289,3 +292,200 @@ class Trainer:
         val_metrics.update(batch_metrics)
         return val_loss / len(val_loader), val_metrics
 
+
+
+
+class DenoisingTrainer:
+    def __init__(self, model, train_loader, val_loader, criterion, optimizer, device, save_dir="experiments/denoising"):
+        """
+        Initializes the Trainer class.
+
+        Args:
+            model (nn.Module): The model to train.
+            train_loader (DataLoader): DataLoader for the training dataset.
+            val_loader (DataLoader): DataLoader for the validation dataset.
+            criterion (nn.Module): Combined loss function (TotalLoss).
+            optimizer (torch.optim.Optimizer): Optimizer for training.
+            device (torch.device): Device for training (CPU or GPU).
+            save_dir (str): Directory to save experiments.
+        """
+        self.model = model
+        self.train_loader = train_loader
+        self.val_loader = val_loader
+        self.criterion = criterion
+        self.optimizer = optimizer
+        self.device = device
+
+        # Create experiment directory
+        timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        self.experiment_dir = os.path.join(save_dir, f"experiment_{timestamp}")
+        os.makedirs(self.experiment_dir, exist_ok=True)
+
+        # Directories for logs, checkpoints, and results
+        self.log_path = os.path.join(self.experiment_dir, "logs.txt")
+        self.checkpoints_dir = os.path.join(self.experiment_dir, "checkpoints")
+        self.results_dir = os.path.join(self.experiment_dir, "results")
+        os.makedirs(self.checkpoints_dir, exist_ok=True)
+        os.makedirs(self.results_dir, exist_ok=True)
+
+        self.best_val_loss = float("inf")
+        self.last_checkpoint_path = os.path.join(self.checkpoints_dir, "last_checkpoint.pth")
+        self.best_checkpoint_path = os.path.join(self.checkpoints_dir, "best_checkpoint.pth")
+
+    def train_one_epoch(self):
+        self.model.train()
+        train_loss = 0.0
+
+        progress_bar = tqdm(self.train_loader, desc="Training")
+
+        for noisy_image, clean_image in progress_bar:
+            # Move input data to the correct device
+            noisy_image = noisy_image.to(self.device)
+            clean_image = clean_image.to(self.device)
+
+            # Forward pass
+            self.optimizer.zero_grad()
+            output = self.model(noisy_image)
+
+            # Normalize outputs for perceptual loss
+            output_norm = (output + 1) / 2
+            clean_image_norm = (clean_image + 1) / 2
+
+            # Compute losses
+            total_loss, adv_loss, perc_loss, pix_loss = self.criterion.total_loss(
+                output_norm, clean_image_norm, gen_output=None, real_output=None
+            )
+
+            # Backward pass and optimization
+            total_loss.backward()
+            self.optimizer.step()
+
+            train_loss += total_loss.item() * noisy_image.size(0)
+
+            # Safely log losses to progress bar
+            adv_loss_value = adv_loss.item() if isinstance(adv_loss, torch.Tensor) else adv_loss
+            perc_loss_value = perc_loss.item() if isinstance(perc_loss, torch.Tensor) else perc_loss
+            pix_loss_value = pix_loss.item() if isinstance(pix_loss, torch.Tensor) else pix_loss
+
+            # Update progress bar with current losses
+            progress_bar.set_postfix(
+                total_loss=total_loss.item(),
+                adv_loss=adv_loss_value,
+                perc_loss=perc_loss_value,
+                pix_loss=pix_loss_value
+            )
+
+        return train_loss / len(self.train_loader.dataset)
+
+    def validate_one_epoch(self):
+        """
+        Validates the model for one epoch.
+
+        Returns:
+            float: Average validation loss for the epoch.
+        """
+        self.model.eval()
+        val_loss = 0.0
+
+        progress_bar = tqdm(self.val_loader, desc="Validating")
+
+        with torch.no_grad():
+            for noisy_image, clean_image in progress_bar:
+                # Move input data to the correct device
+                noisy_image = noisy_image.to(self.device)
+                clean_image = clean_image.to(self.device)
+
+                # Forward pass
+                output = self.model(noisy_image)
+
+                # Normalize outputs for perceptual loss
+                output_norm = (output + 1) / 2
+                clean_image_norm = (clean_image + 1) / 2
+
+                # Compute losses
+                total_loss, adv_loss, perc_loss, pix_loss = self.criterion.total_loss(
+                    output_norm, clean_image_norm, gen_output=None, real_output=None
+                )
+                val_loss += total_loss.item() * noisy_image.size(0)
+
+                # Safely log losses to progress bar
+                adv_loss_value = adv_loss.item() if isinstance(adv_loss, torch.Tensor) else adv_loss
+                perc_loss_value = perc_loss.item() if isinstance(perc_loss, torch.Tensor) else perc_loss
+                pix_loss_value = pix_loss.item() if isinstance(pix_loss, torch.Tensor) else pix_loss
+
+                # Update progress bar with current losses
+                progress_bar.set_postfix(
+                    total_loss=total_loss.item(),
+                    adv_loss=adv_loss_value,
+                    perc_loss=perc_loss_value,
+                    pix_loss=pix_loss_value
+                )
+
+                # Save sample results for the first batch
+                if len(os.listdir(self.results_dir)) < 10:  # Save up to 10 sample images
+                    self.save_sample_images(noisy_image, clean_image, output)
+
+        return val_loss / len(self.val_loader.dataset)
+
+    def save_sample_images(self, noisy_image, clean_image, output):
+        """
+        Saves a few sample images (noisy, clean, and denoised).
+
+        Args:
+            noisy_image (torch.Tensor): Noisy input image.
+            clean_image (torch.Tensor): Clean ground truth image.
+            output (torch.Tensor): Denoised output image.
+        """
+        noisy_image = noisy_image[0].cpu().numpy().transpose(1, 2, 0)
+        clean_image = clean_image[0].cpu().numpy().transpose(1, 2, 0)
+        output = output[0].cpu().detach().numpy().transpose(1, 2, 0)
+
+        fig, axs = plt.subplots(1, 3, figsize=(12, 4))
+        axs[0].imshow(noisy_image)
+        axs[0].set_title("Noisy")
+        axs[1].imshow(clean_image)
+        axs[1].set_title("Clean")
+        axs[2].imshow(output)
+        axs[2].set_title("Denoised")
+        for ax in axs:
+            ax.axis("off")
+
+        image_save_path = os.path.join(self.results_dir, f"sample_{len(os.listdir(self.results_dir)) + 1}.png")
+        plt.savefig(image_save_path)
+        plt.close()
+
+    def log_metrics(self, epoch, train_loss, val_loss):
+        """
+        Logs metrics to a log file.
+
+        Args:
+            epoch (int): Current epoch.
+            train_loss (float): Training loss.
+            val_loss (float): Validation loss.
+        """
+        with open(self.log_path, "a") as log_file:
+            log_file.write(f"Epoch [{epoch + 1}], Train Loss: {train_loss:.4f}, Val Loss: {val_loss:.4f}\n")
+
+    def fit(self, epochs):
+        """
+        Trains and validates the model for the specified number of epochs.
+
+        Args:
+            epochs (int): Number of epochs to train.
+        """
+        for epoch in range(epochs):
+            print(f"Training started for epoch {epoch + 1}")
+            train_loss = self.train_one_epoch()
+            val_loss = self.validate_one_epoch()
+
+            print(f"Epoch [{epoch + 1}/{epochs}], Train Loss: {train_loss:.4f}, Val Loss: {val_loss:.4f}")
+
+            self.log_metrics(epoch, train_loss, val_loss)
+
+            torch.save(self.model.state_dict(), self.last_checkpoint_path)  # Save last checkpoint
+            if val_loss < self.best_val_loss:
+                self.best_val_loss = val_loss
+                torch.save(self.model.state_dict(), self.best_checkpoint_path)  # Save best checkpoint
+                print("Best model saved!")
+
+        print("Training complete!")
