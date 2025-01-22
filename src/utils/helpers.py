@@ -72,9 +72,36 @@ def custom_collate_fn(batch):
 
     return images, masks, sources
 
+def convert_tensor_to_list(obj):
+    """
+    Recursively converts tensors to lists, which are JSON serializable.
+    """
+    if isinstance(obj, torch.Tensor):
+        return obj.tolist()  # Convert tensor to list
+    elif isinstance(obj, dict):
+        return {key: convert_tensor_to_list(value) for key, value in obj.items()}
+    elif isinstance(obj, list):
+        return [convert_tensor_to_list(item) for item in obj]
+    else:
+        return obj
+
 def save_config(config, experiment_dir):
     """Save experiment configuration to a JSON file."""
     config_path = os.path.join(experiment_dir, "config.json")
+    
+    # Convert tensors in config to lists
+    def convert_tensor_to_list(obj):
+        if isinstance(obj, torch.Tensor):
+            return obj.tolist()
+        elif isinstance(obj, dict):
+            return {k: convert_tensor_to_list(v) for k, v in obj.items()}
+        elif isinstance(obj, list):
+            return [convert_tensor_to_list(x) for x in obj]
+        else:
+            return obj
+    
+    config = convert_tensor_to_list(config)
+    
     with open(config_path, "w") as f:
         json.dump(config, f, indent=4)
 
@@ -114,6 +141,7 @@ def log_metrics(epoch, train_loss, val_loss, train_accuracy, val_metrics, experi
         PixelAccuracy: {val_metrics['PixelAccuracy']:.4f}
         DICE: {{ {formatted_dice} }}
         MeanDICE: {val_metrics['MeanDICE']:.4f}
+        overAllIOU: {val_metrics['IoUoverall']:.4f}
     """
 
     # Write to log file

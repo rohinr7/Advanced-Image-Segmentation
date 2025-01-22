@@ -17,11 +17,11 @@ class Trainer:
         setup_logging(log_level=logging_config.get("log_level", "INFO"))
         self.tensorboard_enabled = logging_config.get("tensorboard", True)
 
-        self.model = model.to(device or "cpu")
+        self.model = model.to(device)
         self.loss_fn = loss_fn
         self.optimizer = optimizer
         self.scheduler = scheduler
-        self.device = device or "cpu"
+        self.device = device
         timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")  # Get the current timestamp
         self.experiment_dir = os.path.join("experiments", f"{experiment_name}_{timestamp}" if experiment_name else f"experiment_{timestamp}")
         self.writer = SummaryWriter(log_dir=self.experiment_dir) if self.tensorboard_enabled else None
@@ -51,10 +51,11 @@ class Trainer:
         os.makedirs(os.path.join(self.experiment_dir, "results"), exist_ok=True)
 
     def log_model_info(self):
+        print(f"Optimizer: {self.optimizer}")
         """Log model information (e.g., model name, loss function, optimizer) to TensorBoard."""
         model_info = f"Model: {self.model.__class__.__name__}\n"
         model_info += f"Loss Function: {self.loss_fn.__class__.__name__}\n"
-        model_info += f"Optimizer: {self.optimizer.__class__.__name__}\n"
+        # model_info += f"Optimizer: {self.optimizer.__class__.__name__}\n"
         
         # If a scheduler exists, log its name, otherwise, mention "None"
         if self.scheduler:
@@ -129,9 +130,9 @@ class Trainer:
         best_model_state = None
         best_metric = float("inf") if self.metric == "val_loss" else float("-inf")
         best_epoch = 0
-        if self.tensorboard_enabled:
-            self.log_model_info()
-
+        
+        count_24=0
+        count_class_24=0
         for epoch in range(start_epoch + 1, epochs + 1):
             print(f"Epoch {epoch}/{epochs}")
             epoch_loss, total_correct, total_pixels, total_grad_norm = 0.0, 0, 0, 0.0
@@ -139,8 +140,11 @@ class Trainer:
             self.model.train()
             for batch_idx, (inputs, targets, _, _) in enumerate(train_loader):
                 inputs, targets = inputs.to(self.device), targets.to(self.device)
-
+                unique_vals = torch.unique(inputs)
+                count_24 += (targets == 24).sum().item()
+                
                 outputs = self.model(inputs)
+                
                 loss = self.loss_fn(outputs, targets)
 
                 self.optimizer.zero_grad()
@@ -154,9 +158,19 @@ class Trainer:
 
                 epoch_loss += loss.item()
                 predictions = torch.argmax(outputs, dim=1)
+                predictions = torch.argmax(outputs, dim=1)  # Shape: [batch_size, height, width]
+
+                # Count how many pixels are predicted as class 24
+                count_class_24 += (predictions == 24).sum().item()
+
+                
                 total_correct += (predictions == targets).sum().item()
                 total_pixels += targets.numel()
 
+            print("Number of pixels targets predicted as class 24(person) :",count_24)
+            print(f"Number of pixels predicted as class 24(person): {count_class_24}")
+            count_24=0
+            count_class_24=0
             avg_epoch_loss = epoch_loss / len(train_loader)
             train_accuracy = total_correct / total_pixels
             avg_grad_norm = total_grad_norm / len(train_loader)
@@ -226,6 +240,8 @@ class Trainer:
                     self.writer.add_scalar("Metrics/Validation/MeanIoU", val_metrics["MeanIoU"], epoch)
                 if "MeanDICE" in val_metrics:
                     self.writer.add_scalar("Metrics/Validation/MeanDICE", val_metrics["MeanDICE"], epoch)
+                if "IoUoverall" in val_metrics:
+                    self.writer.add_scalar("Metrics/Validation/IoUoverall", val_metrics["IoUoverall"], epoch)
                 print("Saving in tensorboard")
                 # Log Per-Class IoU and DICE Scores
                 if "IoU" in val_metrics:
@@ -240,7 +256,8 @@ class Trainer:
                         if class_name == "Unused":  # Skip logging for ignored classes
                             continue
                         self.writer.add_scalar(f"Metrics/Validation/DICE/{class_name}", dice_value, epoch)
-
+        # if self.tensorboard_enabled:
+        #     self.log_model_info()
         # Save the best model at the end of training
         if best_model_state is not None:
             best_checkpoint_path = os.path.join(self.experiment_dir, "checkpoints", "best_checkpoint.pth")

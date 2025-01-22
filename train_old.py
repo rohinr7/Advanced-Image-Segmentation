@@ -29,7 +29,7 @@ def get_model(config):
 
 import torch.nn as nn
 
-def get_loss_function(config):
+def get_loss_function(config,device):
     loss_name = config["loss"]["name"]
     params = config["loss"].get("params", {})
     if loss_name == "CrossEntropyLoss":
