@@ -73,7 +73,7 @@ def main(args):
     model = get_model(config)
     model = model.to(device)
 
-    loss_fn = get_loss_function(config)
+    loss_fn = get_loss_function(config,device)
     optimizer = get_optimizer(config, model)
     scheduler = get_scheduler(config, optimizer)
 
@@ -102,7 +102,7 @@ def main(args):
     optimizer=optimizer,
     scheduler=scheduler,
     device=device,
-    experiment_name=args.experiment_name,
+    experiment_name=config["experiment_name"],
     logging_config=config["logging"],
     early_stopping_config=config["early_stopping"],
     metrics_config=config["metrics"],
@@ -161,7 +161,7 @@ def main(args):
     # Start Testing Timer
     test_start_time = datetime.now()
     print(f"Testing started at {test_start_time}")
-    evaluator = Evaluator(model=model, device=device,loss_fn=get_loss_function(config), num_classes=num_classes, metrics_config=config["metrics"])
+    evaluator = Evaluator(model=model, device=device,loss_fn=get_loss_function(config,device), num_classes=num_classes, metrics_config=config["metrics"])
     metrics,_ = evaluator.evaluate(test_loader)
     # End Testing Timer
     test_end_time = datetime.now()

@@ -46,7 +46,7 @@ def evaluate(config, model_path):
 
     # Evaluator
     print("Initializing evaluator...")
-    evaluator = Evaluator(model=model, device=device,loss_fn=get_loss_function(config), num_classes=num_classes, metrics_config=config["metrics"])
+    evaluator = Evaluator(model=model, device=device,loss_fn=get_loss_function(config,device), num_classes=num_classes, metrics_config=config["metrics"])
     metrics,_ = evaluator.evaluate(test_loader)
     print(f"Evaluation Metrics: {metrics}")
 
