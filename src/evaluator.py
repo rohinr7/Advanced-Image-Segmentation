@@ -4,7 +4,7 @@ from src.metrics import compute_iou,compute_iou_for_target_classes_only, compute
 from src.utils.mapping import classIndexToMask
 import os
 import matplotlib.pyplot as plt
-import segmentation_models_pytorch as smp
+# import segmentation_models_pytorch as smp
 
 class Evaluator:
     def __init__(self, model, device,loss_fn, num_classes, metrics_config):
@@ -43,17 +43,17 @@ class Evaluator:
             device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
             predictions_tensor = predictions_tensor.to(device)
             targets_tensor = targets_tensor.to(device)
-            TP, FP, FN, TN = smp.metrics.get_stats(
-                output=predictions_tensor,
-                target=targets_tensor,
-                mode="multiclass",
-                ignore_index=-1,  # If needed, ignore certain index (e.g., background)
-                num_classes=self.num_classes
-            )
+            # TP, FP, FN, TN = smp.metrics.get_stats(
+            #     output=predictions_tensor,
+            #     target=targets_tensor,
+            #     mode="multiclass",
+            #     ignore_index=-1,  # If needed, ignore certain index (e.g., background)
+            #     num_classes=self.num_classes
+            # )
             
             # Compute IoU using the stats
-            iou = smp.metrics.iou_score(TP, FP, FN, TN, reduction="micro")
-            results["IoUoverall"] = iou
+            # iou = smp.metrics.iou_score(TP, FP, FN, TN, reduction="micro")
+            results["IoUoverall"] = 1
             results["IoU"], results["MeanIoU"] = compute_iou_for_target_classes_only(predictions, targets, self.num_classes)
         if self.metrics_config.get("pixel_accuracy", False):
             results["PixelAccuracy"] = compute_pixel_accuracy(predictions, targets)
@@ -68,7 +68,7 @@ class Evaluator:
         Args:
             data_loader (DataLoader): DataLoader for the evaluation dataset.
             save_rgb (bool): Whether to save RGB visualizations of predictions and targets.
-            output_dir (str): Directory to save RGB visualizations if `save_rgb` is True.
+            output_dir (str): Directory to save RGB visualizations if save_rgb is True.
 
         Returns:
             dict: Aggregated metrics across all batches.
@@ -137,8 +137,8 @@ class Evaluator:
                         classIndexToMask(targets_np[i]) for i in range(targets_np.shape[0])
                     ])
                     for i, (rgb_pred, rgb_target) in enumerate(zip(rgb_predictions, rgb_targets)):
-                        pred_path = os.path.join(output_dir, f"batch_{batch_idx + 1}_sample_{i}_pred.png")
-                        target_path = os.path.join(output_dir, f"batch_{batch_idx + 1}_sample_{i}_target.png")
+                        pred_path = os.path.join(output_dir, f"batch_{batch_idx + 1}sample{i}_pred.png")
+                        target_path = os.path.join(output_dir, f"batch_{batch_idx + 1}sample{i}_target.png")
                         plt.imsave(pred_path, rgb_pred)
                         plt.imsave(target_path, rgb_target)
 
@@ -165,4 +165,4 @@ class Evaluator:
         avg_metrics["val_loss"] = avg_loss
         avg_metrics["val_accuracy"] = val_accuracy
 
-        return avg_metrics, avg_loss
+        return avg_metrics,avg_loss

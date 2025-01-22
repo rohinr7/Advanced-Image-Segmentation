@@ -34,12 +34,17 @@ def get_model(config):
     else:
         raise ValueError(f"Unsupported model: {config['model']['name']}")
 
-def get_loss_function(config):
+
+def get_loss_function(config, device):
     """
     Returns the appropriate loss function based on the configuration.
     """
     loss_name = config["loss"]["name"]
     params = config["loss"].get("params", {})
+
+    # Check and convert 'weight' to a torch.Tensor if it's provided as a list
+    if 'weight' in params:
+        params['weight'] = torch.tensor(params['weight'], dtype=torch.float32).to(device)  # Move weight to device
 
     if loss_name == "CrossEntropyLoss":
         return torch.nn.CrossEntropyLoss(**params)
@@ -61,7 +66,7 @@ def get_loss_function(config):
 def get_optimizer(config, model):
     optimizer_name = config["optimizer"]["name"]
     params = config["optimizer"]["params"]
-    
+    print(f"Initializing {optimizer_name} optimizer with params: {params}")  # Debug statement
     if optimizer_name == "Adam":
         return torch.optim.Adam(model.parameters(), **params)
     elif optimizer_name == "SGD":
